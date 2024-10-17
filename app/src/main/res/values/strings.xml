@@ -3,6 +3,7 @@
     <string name="title_home">Accueil</string>
     <string name="new_list">Nouvelle liste</string>
     <string name="new_errand">Nouvelle Course</string>
+    <string name="last_errand">Dernière Course</string>
     <string name="price">Prix</string>
     <string name="budget">Budget</string>
     <string name="button_start">Commencer</string>
