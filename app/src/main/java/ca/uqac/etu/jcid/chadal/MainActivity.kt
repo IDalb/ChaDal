@@ -5,7 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
@@ -17,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
@@ -38,9 +41,14 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
 @Composable
 fun HomeScreenLayout(modifier: Modifier = Modifier) {
     val showText = remember { mutableStateOf(false) }
+    val budgetText = remember { mutableStateOf("") }
+
+    // List of items to be displayed in the dropdown list
+    val initialList = List(3) { "Item ${it + 1}" } // Start with 3 items
 
     Column(
         modifier = modifier
@@ -52,7 +60,7 @@ fun HomeScreenLayout(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Title of the Home Screen
+
         Text(
             text = "Accueil",
             modifier = Modifier
@@ -60,25 +68,111 @@ fun HomeScreenLayout(modifier: Modifier = Modifier) {
                 .align(alignment = Alignment.Start),
             style = MaterialTheme.typography.titleLarge
         )
-        // Displaying the budget
-        Text(
-            text = "Budget: $0.00",
-            style = MaterialTheme.typography.displaySmall
-        )
         Spacer(modifier = Modifier.height(50.dp))
 
-        // Button to display "Nouvelle liste"
-        Button(onClick = { showText.value = true }) {
-            Text(text = "Nouvelle liste")
+        // Box with title and input
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            elevation = CardDefaults.cardElevation(8.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Large title "Nouvelle liste" at the top of the rectangle
+                Text(
+                    text = "Nouvelle liste",
+                    style = MaterialTheme.typography.headlineLarge, // Bigger title
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // Input field for budget at the bottom
+                TextField(
+                    value = budgetText.value,
+                    onValueChange = {
+                        // Only allow digits (0-9)
+                        if (it.all { char -> char.isDigit() }) {
+                            budgetText.value = it
+                        }
+                    },
+                    label = { Text("Budget") },
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // Button to create a new list
+                Button(onClick = { showText.value = true }) {
+                    Text(text = "Nouvelle liste")
+                }
+            }
         }
 
-        // Conditionally show the text "Nouvelle liste" when button is clicked
+        // Conditionally show the text "Nouvelle liste créée!" when button is clicked
         if (showText.value) {
-            Text(text = "Nouvelle liste", style = MaterialTheme.typography.bodyLarge)
+            Text(text = "Nouvelle liste créée!", style = MaterialTheme.typography.bodyLarge)
         }
-    }
-}
 
+        Spacer(modifier = Modifier.height(40.dp))
+
+        // Card containing the dropdown list of other Cards
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            elevation = CardDefaults.cardElevation(8.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Title of the list
+                Text(
+                    text = "Liste déroulante",
+                    style = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                // LazyColumn for the list of items
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp) // Adjust the height for scrollable area
+                ) {
+
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // Button to show more items
+                Button(onClick = {
+                    // Add 3 more items to the list
+
+                }) {
+                    Text(text = "Afficher plus",
+                        modifier = Modifier
+                            .fillMaxWidth(),
+
+
+
+
+                        )
+
+                }
+            }
+        }
+    
+}
 @Composable
 fun BottomNavigationBar() {
     BottomAppBar {
