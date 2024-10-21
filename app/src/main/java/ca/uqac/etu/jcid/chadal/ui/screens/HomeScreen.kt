@@ -39,7 +39,7 @@ fun HomeScreen(
         Column(
             modifier = modifier
                 .padding(paddingValues)
-                .padding(horizontal = 40.dp)
+                .padding(horizontal = 20.dp)
                 .verticalScroll(rememberScrollState())
                 .safeDrawingPadding()
                 .fillMaxSize(),
@@ -122,7 +122,7 @@ fun HomeScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(10.dp))
                 Button(onClick = { /* Your click action */ }) {
                     Text(
                         text = "Afficher plus",
