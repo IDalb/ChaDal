@@ -58,7 +58,6 @@ fun HomeScreen(
         )
         Spacer(modifier = Modifier.height(50.dp))
 
-        // Box with title and input
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -71,20 +70,17 @@ fun HomeScreen(
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Large title "Nouvelle liste" at the top of the rectangle
                 Text(
                     text = "Nouvelle liste",
-                    style = MaterialTheme.typography.headlineLarge, // Bigger title
+                    style = MaterialTheme.typography.headlineLarge,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // Input field for budget at the bottom
                 TextField(
                     value = budgetText.value,
                     onValueChange = {
-                        // Only allow digits (0-9)
                         if (it.all { char -> char.isDigit() }) {
                             budgetText.value = it
                         }
@@ -96,21 +92,18 @@ fun HomeScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // Button to create a new list
                 Button( onClick = onStartShoppingButtonClicked,) {
                     Text(text = "Nouvelle liste")
                 }
             }
         }
 
-        // Conditionally show the text "Nouvelle liste créée!" when button is clicked
         if (showText.value) {
             Text(text = "Nouvelle liste créée!", style = MaterialTheme.typography.bodyLarge)
         }
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        // Card containing the dropdown list of other Cards
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -123,29 +116,23 @@ fun HomeScreen(
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Title of the list
                 Text(
                     text = "Liste déroulante",
                     style = MaterialTheme.typography.headlineLarge,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
-                // LazyColumn for the list of items
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp) // Adjust the height for scrollable area
+                        .height(200.dp)
                 ) {
 
                 }
             }
 
             Spacer(modifier = Modifier.height(20.dp))
-
-            // Button to show more items
             Button(onClick = {
-                // Add 3 more items to the list
-
             }) {
                 Text(text = "Afficher plus",
                     modifier = Modifier
@@ -162,22 +149,6 @@ fun HomeScreen(
 
 }
 
-@Composable
-fun BottomNavigationBar() {
-    BottomAppBar {
-        IconButton(onClick = { /* TODO: Home action */ }) {
-            Icon(Icons.Filled.Home, contentDescription = "Home")
-        }
-        Spacer(modifier = Modifier.weight(1f, true))
-        IconButton(onClick = { /* TODO: Favorite action */ }) {
-            Icon(Icons.Filled.Favorite, contentDescription = "Favorite")
-        }
-        Spacer(modifier = Modifier.weight(1f, true))
-        IconButton(onClick = { /* TODO: Settings action */ }) {
-            Icon(Icons.Filled.Settings, contentDescription = "Settings")
-        }
-    }
-}
 
 @Preview
 @Composable

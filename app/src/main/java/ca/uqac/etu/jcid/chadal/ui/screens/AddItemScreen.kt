@@ -61,7 +61,7 @@ fun AddItemScreen(
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        // Champ de texte pour le prix
+
         TextField(
             value = price,
             onValueChange = {
@@ -77,7 +77,7 @@ fun AddItemScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Liste déroulante pour la catégorie
+
         Box(modifier = Modifier.fillMaxWidth()) {
             TextButton(onClick = { expanded = true }) {
                 Text(if (selectedCategory.isEmpty()) "Catégorie" else selectedCategory)
@@ -111,7 +111,7 @@ fun AddItemScreen(
             modifier = Modifier.padding(vertical = 8.dp)
         )
 
-        // Champ de texte pour le nom
+
         TextField(
             value = name,
             onValueChange = { name = it },
@@ -122,7 +122,6 @@ fun AddItemScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Ajouter une photo (simulé avec un icône pour l'instant)
         Box(
             modifier = Modifier
                 .size(120.dp)
@@ -137,9 +136,8 @@ fun AddItemScreen(
             )
         }
 
-        Spacer(modifier = Modifier.weight(1f)) // Utilise tout l'espace restant
+        Spacer(modifier = Modifier.weight(1f))
 
-        // Boutons en bas
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
