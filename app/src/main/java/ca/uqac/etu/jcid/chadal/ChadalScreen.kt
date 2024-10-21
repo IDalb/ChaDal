@@ -103,7 +103,7 @@ fun ChadalApp(
                     onCancelButtonClicked = {
                         navController.popBackStack(ChadalScreens.ListComposition.name, false)
                     },
-                    modifier = Modifier.fillMaxHeight()
+                    modifier = Modifier
                 )
             }
         }
