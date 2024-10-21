@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">ChaDal</string>
+    <string name="currency_cad">CAD</string>
+    <string name="currency_euro">€</string>
+
+    <string name="title_list_composition">Composition de la liste de courses</string>
+
+    <string name="add_article">Ajouter un article</string>
+    <string name="finish">Terminer</string>
+    <string name="total">Total</string>
+    <string name="budget">Budget</string>
+
+    <string name="placeholder_article_name">Nom de l\'article</string>
+    <string name="placeholder_category">Catégorie</string>
+    <string name="placeholder_price">Prix</string>
 </resources>

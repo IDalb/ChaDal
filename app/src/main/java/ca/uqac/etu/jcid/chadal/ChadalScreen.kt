@@ -59,7 +59,7 @@ fun ChadalApp (
                     onFinishShoppingButtonClicked = {
                         navController.navigate(ChadalScreens.ListSummary.name)
                     },
-                    modifier = Modifier.fillMaxHeight()
+                    modifier = Modifier
                 )
             }
             composable(route = ChadalScreens.Scan.name) {
