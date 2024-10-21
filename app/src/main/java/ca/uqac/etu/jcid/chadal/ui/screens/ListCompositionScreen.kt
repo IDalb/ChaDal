@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ca.uqac.etu.jcid.chadal.R
@@ -46,7 +47,7 @@ fun ListCompositionScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Composition de la liste de courses") },
+                title = { Text(stringResource(R.string.title_list_composition)) },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 ),
@@ -56,8 +57,8 @@ fun ListCompositionScreen(
         floatingActionButton = {
             ExtendedFloatingActionButton (
                 onClick = { onAddItemButtonClicked() },
-                icon = { Icon(Icons.Filled.Add, "Ajouter un article") },
-                text = { Text("Ajouter un article") }
+                icon = { Icon(Icons.Filled.Add, null) },
+                text = { stringResource(R.string.add_article) }
             )
         },
         bottomBar = {
@@ -77,18 +78,18 @@ fun ListCompositionScreen(
                             null,
                             modifier = Modifier.padding(0.dp, 0.dp, 8.dp, 0.dp)
                         )
-                        Text("Terminer")
+                        Text(stringResource(R.string.finish))
                     }
                     Column (
                         modifier = Modifier.weight(1f),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Total: 00$",
+                            text = stringResource(R.string.total) + ": " + "00" + stringResource(R.string.currency_cad),
                             style = MaterialTheme.typography.titleLarge
                         )
                         Text(
-                            text = "Budget: 888$",
+                            text = stringResource(R.string.budget) + ": " + "000" + stringResource(R.string.currency_cad),
                             style = MaterialTheme.typography.titleSmall
                         )
                     }
@@ -126,9 +127,17 @@ fun ArticleCard(
                 modifier = Modifier.fillMaxWidth().aspectRatio(7f/4f)
             )
             Column(modifier = modifier.padding(8.dp)) {
-                Text("Nom article", style = MaterialTheme.typography.titleMedium)
-                Text("Catégorie", style = MaterialTheme.typography.labelMedium)
-                Text("Prix", style = MaterialTheme.typography.bodyLarge,
+                Text(
+                    text = stringResource(R.string.placeholder_article_name),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = stringResource(R.string.placeholder_category),
+                    style = MaterialTheme.typography.labelMedium
+                )
+                Text(
+                    text = stringResource(R.string.placeholder_price),
+                    style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(0.dp, 4.dp, 0.dp, 0.dp)
                 )
             }
