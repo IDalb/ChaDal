@@ -58,7 +58,7 @@ fun ListCompositionScreen(
             ExtendedFloatingActionButton (
                 onClick = { onAddItemButtonClicked() },
                 icon = { Icon(Icons.Filled.Add, null) },
-                text = { stringResource(R.string.add_article) }
+                text = { Text(stringResource(R.string.add_article)) }
             )
         },
         bottomBar = {
