@@ -29,7 +29,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.stringResource
+import androidx.navigation.compose.rememberNavController
+import ca.uqac.etu.jcid.chadal.R
+import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddItemScreen(
     onCancelButtonClicked: () -> Unit = {},
@@ -41,120 +46,110 @@ fun AddItemScreen(
     var selectedCategory by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) } // Contrôle l'état d'expansion du menu déroulant
 
-    Text("Ajouter un article")
+    Scaffold (
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.title_add_item)) },
+                colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                ),
+                modifier = modifier
+            )
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding).padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text(
+                text = "Code-barres : 000000000000",
+                style = MaterialTheme.typography.titleMedium,
+                color = Color.Gray
+            )
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "Nouvel article",
-            fontSize = 24.sp,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-        Text(
-            text = "Code bar : 000000000000",
-            fontSize = 16.sp,
-            color = Color.Gray,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+            HorizontalDivider()
 
-
-        TextField(
-            value = price,
-            onValueChange = {
-                if (it.all { char -> char.isDigit() }) { // Assure que seuls les chiffres sont acceptés
-                    price = it
+            OutlinedTextField(
+                value = price,
+                onValueChange = {
+                    if (it.all { char -> char.isDigit() }) { // Assure que seuls les chiffres sont acceptés
+                        price = it
+                    }
+                },
+                label = { Text("Prix") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Box(modifier = Modifier.fillMaxWidth()) {
+                TextButton(onClick = { expanded = true }) {
+                    Text(if (selectedCategory.isEmpty()) "Catégorie" else selectedCategory)
+                    Icon(
+                        painter = painterResource(id = android.R.drawable.arrow_down_float),
+                        contentDescription = null
+                    )
                 }
-            },
-            label = { Text("Prix") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-
-        Box(modifier = Modifier.fillMaxWidth()) {
-            TextButton(onClick = { expanded = true }) {
-                Text(if (selectedCategory.isEmpty()) "Catégorie" else selectedCategory)
-                Icon(
-                    painter = painterResource(id = android.R.drawable.arrow_down_float),
-                    contentDescription = null
-                )
-            }
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                val categories = listOf("Produits laitiers", "Viandes", "Fruits", "Légumes", "Boissons")
-                categories.forEach { category ->
-                    DropdownMenuItem(onClick = {
-                        selectedCategory = category
-                        expanded = false
-                    }) {
-                        Text(text = category)
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    val categories = listOf("Produits laitiers", "Viandes", "Fruits", "Légumes", "Boissons")
+                    categories.forEach { category ->
+                        DropdownMenuItem(onClick = {
+                            selectedCategory = category
+                            expanded = false
+                        }) {
+                            Text(text = category)
+                        }
                     }
                 }
             }
-        }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = "Informations facultatives",
-            fontSize = 16.sp,
-            color = Color.Gray,
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-
-
-        TextField(
-            value = name,
-            onValueChange = { name = it },
-            label = { Text("Nom") },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Box(
-            modifier = Modifier
-                .size(120.dp)
-                .padding(16.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(id = android.R.drawable.ic_menu_camera),
-                contentDescription = null,
-                modifier = Modifier.size(60.dp),
-                colorFilter = ColorFilter.tint(Color.Black)
+            Text(
+                text = "Informations facultatives",
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(top = 40.dp)
             )
-        }
 
-        Spacer(modifier = Modifier.weight(1f))
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text("Nom") },
+                modifier = Modifier.fillMaxWidth()
+            )
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            Button(
-                onClick = onCancelButtonClicked,
-                colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray),
-                modifier = Modifier.weight(1f).padding(end = 8.dp)
+            Box(
+                modifier = Modifier
+                    .size(120.dp)
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
             ) {
-                Text("Annuler")
+                Image(
+                    painter = painterResource(id = android.R.drawable.ic_menu_camera),
+                    contentDescription = null,
+                    modifier = Modifier.size(60.dp),
+                    colorFilter = ColorFilter.tint(Color.Black)
+                )
             }
-            Button(
-                onClick = onValidateButtonClicked,
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
-                modifier = Modifier.weight(1f).padding(start = 8.dp)
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Text("Confirmer")
+                OutlinedButton(
+                    onClick = onCancelButtonClicked,
+                    modifier = Modifier.weight(1f).padding(end = 8.dp)
+                ) { Text(stringResource(R.string.cancel)) }
+                Button(
+                    onClick = onValidateButtonClicked,
+                    modifier = Modifier.weight(1f).padding(start = 8.dp)
+                ) {
+                    Text(stringResource(R.string.finish))
+                }
             }
         }
     }
@@ -164,3 +159,10 @@ fun DropdownMenuItem(onClick: () -> Unit, interactionSource: @Composable () -> U
 
 }
 
+@Preview
+@Composable
+fun AddItemScreenPreview() {
+    ChaDalTheme {
+        AddItemScreen()
+    }
+}

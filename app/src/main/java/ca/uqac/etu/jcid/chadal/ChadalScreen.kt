@@ -12,6 +12,7 @@ import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -46,20 +47,18 @@ fun ChadalApp(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    Scaffold(
-        bottomBar = { BottomNavigationBar(navController) } // Ajout de la barre de navigation
-    ) { innerPadding ->
+     Scaffold { innerPadding ->
         NavHost(
             navController = navController,
             startDestination = ChadalScreens.Home.name,
-            modifier = Modifier.padding(innerPadding)
         ) {
             composable(route = ChadalScreens.Home.name) {
                 HomeScreen(
                     onStartShoppingButtonClicked = {
                         navController.navigate(ChadalScreens.ListComposition.name)
                     },
-                    modifier = Modifier.fillMaxSize().padding(16.dp)
+                    navController = navController,
+                    modifier = Modifier
                 )
             }
             composable(route = ChadalScreens.ListComposition.name) {
@@ -92,7 +91,7 @@ fun ChadalApp(
                     onCancelButtonClicked = {
                         navController.popBackStack(ChadalScreens.Scan.name, false)
                     },
-                    modifier = Modifier.fillMaxHeight()
+                    modifier = Modifier
                 )
             }
             composable(route = ChadalScreens.ListSummary.name) {
@@ -106,23 +105,6 @@ fun ChadalApp(
                     modifier = Modifier
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun BottomNavigationBar(navController: NavController) {
-    BottomAppBar {
-        IconButton(onClick = { navController.navigate(ChadalScreens.Home.name) }) {
-            Icon(Icons.Filled.Home, contentDescription = "Home")
-        }
-        Spacer(modifier = Modifier.weight(1f, true))
-        IconButton(onClick = { navController.navigate(ChadalScreens.ListComposition.name) }) {
-            Icon(Icons.Filled.ShoppingCart, contentDescription = "List Composition")
-        }
-        Spacer(modifier = Modifier.weight(1f, true))
-        IconButton(onClick = { navController.navigate(ChadalScreens.ListSummary.name) }) {
-            Icon(Icons.Filled.List, contentDescription = "List Summary")
         }
     }
 }

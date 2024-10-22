@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -62,47 +63,49 @@ fun ListCompositionScreen(
             )
         },
         bottomBar = {
-            Column {
-                LinearProgressIndicator(
-                    progress = { 0.70f },
-                    modifier = Modifier.fillMaxWidth().height(8.dp)
-                )
-                Row (
-                    modifier = Modifier.fillMaxWidth().padding(16.dp, 8.dp)
-                ) {
-                    OutlinedButton(
-                        onClick = onFinishShoppingButtonClicked
+            BottomAppBar {
+                Column {
+                    LinearProgressIndicator(
+                        progress = { 0.70f },
+                        modifier = Modifier.fillMaxWidth().height(8.dp)
+                    )
+                    Row (
+                        modifier = Modifier.fillMaxWidth().padding(16.dp, 8.dp)
                     ) {
-                        Icon(
-                            Icons.Filled.Done,
-                            null,
-                            modifier = Modifier.padding(0.dp, 0.dp, 8.dp, 0.dp)
-                        )
-                        Text(stringResource(R.string.finish))
-                    }
-                    Column (
-                        modifier = Modifier.weight(1f),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = stringResource(R.string.total) + ": " + "00" + stringResource(R.string.currency_cad),
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                        Text(
-                            text = stringResource(R.string.budget) + ": " + "000" + stringResource(R.string.currency_cad),
-                            style = MaterialTheme.typography.titleSmall
-                        )
+                        OutlinedButton(
+                            onClick = onFinishShoppingButtonClicked
+                        ) {
+                            Icon(
+                                Icons.Filled.Done,
+                                null,
+                                modifier = Modifier.padding(0.dp, 0.dp, 8.dp, 0.dp)
+                            )
+                            Text(stringResource(R.string.finish))
+                        }
+                        Column (
+                            modifier = Modifier.weight(1f),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = stringResource(R.string.total) + ": " + "00" + stringResource(R.string.currency_cad),
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                            Text(
+                                text = stringResource(R.string.budget) + ": " + "000" + stringResource(R.string.currency_cad),
+                                style = MaterialTheme.typography.titleSmall
+                            )
+                        }
                     }
                 }
             }
         }
     ) { innerPadding ->
         LazyVerticalGrid (
+            modifier = modifier.padding(innerPadding),
             columns = GridCells.Fixed(2),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = modifier.padding(innerPadding)
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(11) {
                 ArticleCard(modifier = modifier)

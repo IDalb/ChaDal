@@ -3,6 +3,8 @@
     <string name="currency_cad">CAD</string>
     <string name="currency_euro">€</string>
 
+    <string name="title_home">Accueil</string>
+    <string name="title_add_item">Ajouter un nouvel article</string>
     <string name="title_list_composition">Composition de la liste de courses</string>
     <string name="title_list_summary">Finalisation de la liste de courses</string>
     <string name="title_scan">Scan du code-barres</string>
