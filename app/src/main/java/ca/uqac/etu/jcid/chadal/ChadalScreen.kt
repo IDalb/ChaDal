@@ -47,18 +47,17 @@ fun ChadalApp(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-     Scaffold { innerPadding ->
+     Scaffold {
         NavHost(
             navController = navController,
-            startDestination = ChadalScreens.Home.name,
+            startDestination = ChadalScreens.Home.name
         ) {
             composable(route = ChadalScreens.Home.name) {
                 HomeScreen(
                     onStartShoppingButtonClicked = {
                         navController.navigate(ChadalScreens.ListComposition.name)
                     },
-                    navController = navController,
-                    modifier = Modifier
+                    navController = navController
                 )
             }
             composable(route = ChadalScreens.ListComposition.name) {
@@ -68,8 +67,7 @@ fun ChadalApp(
                     },
                     onFinishShoppingButtonClicked = {
                         navController.navigate(ChadalScreens.ListSummary.name)
-                    },
-                    modifier = Modifier
+                    }
                 )
             }
             composable(route = ChadalScreens.Scan.name) {
@@ -79,8 +77,7 @@ fun ChadalApp(
                     },
                     onCancelButtonClicked = {
                         navController.popBackStack(ChadalScreens.ListComposition.name, false)
-                    },
-                    modifier = Modifier
+                    }
                 )
             }
             composable(route = ChadalScreens.AddItem.name) {
@@ -90,8 +87,7 @@ fun ChadalApp(
                     },
                     onCancelButtonClicked = {
                         navController.popBackStack(ChadalScreens.Scan.name, false)
-                    },
-                    modifier = Modifier
+                    }
                 )
             }
             composable(route = ChadalScreens.ListSummary.name) {
@@ -101,8 +97,7 @@ fun ChadalApp(
                     },
                     onCancelButtonClicked = {
                         navController.popBackStack(ChadalScreens.ListComposition.name, false)
-                    },
-                    modifier = Modifier
+                    }
                 )
             }
         }

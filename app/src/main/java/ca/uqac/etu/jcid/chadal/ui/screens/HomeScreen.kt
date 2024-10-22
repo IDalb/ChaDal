@@ -59,12 +59,10 @@ fun HomeScreen(
     ) { paddingValues ->
         Column(
             modifier = modifier
-                .padding(paddingValues).padding(0.dp, 12.dp)
+                .padding(paddingValues).padding(16.dp, 32.dp)
                 .verticalScroll(rememberScrollState())
-                .safeDrawingPadding()
                 .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             OutlinedCard(
                 modifier = Modifier
@@ -181,8 +179,7 @@ fun HomeScreenPreview() {
     ChaDalTheme {
         HomeScreen(
             onStartShoppingButtonClicked = {},
-            navController = rememberNavController(),
-            modifier = Modifier.fillMaxSize().padding(16.dp)
+            navController = rememberNavController()
         )
     }
 }
