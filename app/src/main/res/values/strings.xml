@@ -5,6 +5,7 @@
 
     <string name="title_list_composition">Composition de la liste de courses</string>
     <string name="title_list_summary">Finalisation de la liste de courses</string>
+    <string name="title_scan">Scan du code-barres</string>
 
     <string name="add_article">Ajouter un article</string>
     <string name="finish">Terminer</string>
@@ -12,6 +13,8 @@
     <string name="total">Total</string>
     <string name="budget">Budget</string>
     <string name="article">Article(s)</string>
+
+    <string name="no_barcode">Pas de code-barres</string>
 
     <string name="placeholder_article_name">Nom de l\'article</string>
     <string name="placeholder_category">Catégorie</string>
