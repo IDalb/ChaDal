@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Done
@@ -36,12 +37,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ca.uqac.etu.jcid.chadal.R
+import ca.uqac.etu.jcid.chadal.data.Article
+import ca.uqac.etu.jcid.chadal.data.ArticleCategory
+import ca.uqac.etu.jcid.chadal.data.ShoppingListUiState
 import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListCompositionScreen(
     modifier: Modifier = Modifier,
+    listUiState: ShoppingListUiState,
     onAddItemButtonClicked: () -> Unit = {},
     onFinishShoppingButtonClicked: () -> Unit = {}
 ) {
@@ -107,8 +112,11 @@ fun ListCompositionScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(11) {
-                ArticleCard(modifier = modifier)
+            items(listUiState.articles) {
+                ArticleCard(
+                    article = it,
+                    modifier = modifier
+                )
             }
         }
     }
@@ -116,7 +124,8 @@ fun ListCompositionScreen(
 
 @Composable
 fun ArticleCard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    article: Article
 ) {
     OutlinedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -124,22 +133,22 @@ fun ArticleCard(
     ) {
         Column(modifier = modifier) {
             Image(
-                painterResource(R.drawable.ic_launcher_background),
+                painterResource(article.imageResourceId),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxWidth().aspectRatio(7f/4f)
             )
             Column(modifier = modifier.padding(8.dp)) {
                 Text(
-                    text = stringResource(R.string.placeholder_article_name),
+                    text = article.name,
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = stringResource(R.string.placeholder_category),
+                    text = stringResource(article.category.name),
                     style = MaterialTheme.typography.labelMedium
                 )
                 Text(
-                    text = stringResource(R.string.placeholder_price),
+                    text = "%.2f CAD".format(article.price),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(0.dp, 4.dp, 0.dp, 0.dp)
                 )
@@ -152,6 +161,17 @@ fun ArticleCard(
 @Composable
 fun ListCompositionScreenPreview() {
     ChaDalTheme {
-        ListCompositionScreen()
+        ListCompositionScreen(
+            listUiState = ShoppingListUiState(
+                List(5) {
+                    Article(
+                        stringResource(R.string.placeholder_article_name),
+                        ArticleCategory(R.string.placeholder_category, 0f),
+                        0f,
+                        R.drawable.ic_launcher_background
+                    )
+                }
+            )
+        )
     }
 }

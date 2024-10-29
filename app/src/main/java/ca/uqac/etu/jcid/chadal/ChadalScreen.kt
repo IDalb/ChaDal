@@ -46,6 +46,7 @@ fun ChadalApp(
             }
             composable(route = ChadalScreens.ListComposition.name) {
                 ListCompositionScreen(
+                    listUiState = uiState,
                     onAddItemButtonClicked = {
                         navController.navigate(ChadalScreens.Scan.name)
                     },
@@ -66,7 +67,8 @@ fun ChadalApp(
             }
             composable(route = ChadalScreens.AddItem.name) {
                 AddItemScreen(
-                    onValidateButtonClicked = {
+                    onValidateButtonClicked = { article ->
+                        viewModel.addArticle(article)
                         navController.popBackStack(ChadalScreens.ListComposition.name, false)
                     },
                     onCancelButtonClicked = {

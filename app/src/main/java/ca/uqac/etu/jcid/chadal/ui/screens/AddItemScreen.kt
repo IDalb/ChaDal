@@ -32,13 +32,15 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.rememberNavController
 import ca.uqac.etu.jcid.chadal.R
+import ca.uqac.etu.jcid.chadal.data.Article
+import ca.uqac.etu.jcid.chadal.data.ArticleCategory
 import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddItemScreen(
     onCancelButtonClicked: () -> Unit = {},
-    onValidateButtonClicked: () -> Unit = {},
+    onValidateButtonClicked: (Article) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var price by remember { mutableStateOf("") }
@@ -145,7 +147,14 @@ fun AddItemScreen(
                     modifier = Modifier.weight(1f).padding(end = 8.dp)
                 ) { Text(stringResource(R.string.cancel)) }
                 Button(
-                    onClick = onValidateButtonClicked,
+                    onClick = { onValidateButtonClicked(
+                        Article(
+                            "Abc",
+                            ArticleCategory(R.string.placeholder_category, 0.5f),
+                            5f,
+                            R.drawable.ic_launcher_foreground
+                        )
+                    ) },
                     modifier = Modifier.weight(1f).padding(start = 8.dp)
                 ) {
                     Text(stringResource(R.string.finish))
