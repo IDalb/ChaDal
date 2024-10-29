@@ -108,39 +108,25 @@ fun HomeScreen(
             }
 
             Spacer(modifier = Modifier.height(40.dp))
-
-            Card(
+            Text(
+                text = "Dernières courses",
+                style = MaterialTheme.typography.headlineLarge,
+                modifier = Modifier.padding(bottom = 24.dp)
+            )
+            LazyColumn(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                elevation = CardDefaults.cardElevation(8.dp)
+                    .fillMaxWidth()
+                    .weight(1f)
+            ){
+                // insérer liste des dernières courses ici
+
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+            Button(
+                onClick = { /* Your click action */ },
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Dernières courses",
-                        style = MaterialTheme.typography.headlineLarge,
-                        modifier = Modifier.padding(bottom = 24.dp)
-                    )
-
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                    ) {
-                        // Your list items go here
-                    }
-
-                    Spacer(modifier = Modifier.height(20.dp))
-                    Button(
-                        onClick = { /* Your click action */ },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(text = "Afficher plus")
-                    }
-                }
+                Text(text = "Afficher plus")
             }
         }
     }
