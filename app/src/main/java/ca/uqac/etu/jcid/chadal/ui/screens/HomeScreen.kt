@@ -34,6 +34,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import ca.uqac.etu.jcid.chadal.ChadalScreens
 import ca.uqac.etu.jcid.chadal.R
+import ca.uqac.etu.jcid.chadal.ui.Component.CardList
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,8 +75,9 @@ fun HomeScreen(
                         .padding(16.dp)
                         .fillMaxWidth()
                 ) {
+
                     Text(
-                        text = "Nouvelle liste",
+                        text = stringResource(R.string.title_list_new),
                         style = MaterialTheme.typography.headlineLarge,
                         modifier = Modifier.padding(bottom = 24.dp)
                     )
@@ -87,7 +89,7 @@ fun HomeScreen(
                                 budgetText.value = it
                             }
                         },
-                        label = { Text("Budget") },
+                        label = { R.string.budget },
                         modifier = Modifier.fillMaxWidth(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
@@ -113,13 +115,19 @@ fun HomeScreen(
                 style = MaterialTheme.typography.headlineLarge,
                 modifier = Modifier.padding(bottom = 24.dp)
             )
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-            ){
-                // insérer liste des dernières courses ici
+            ) {
 
+                items(3) {
+                    CardList(
+                        modifier = Modifier
+                            .padding(20.dp)
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(20.dp))
             Button(
@@ -141,7 +149,7 @@ fun BottomNavigationBar(navController: NavController) {
             selected = selectedTabIndex == 0,
             onClick = { selectedTabIndex = 0 },
             icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
-            label = { Text("Accueil") }
+            label = {  Text(stringResource(R.string.title_home)) }
         )
         NavigationBarItem(
             selected = selectedTabIndex == 1,
@@ -157,6 +165,7 @@ fun BottomNavigationBar(navController: NavController) {
         )
     }
 }
+
 
 
 @Preview

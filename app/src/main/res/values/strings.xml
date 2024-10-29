@@ -6,10 +6,14 @@
     <string name="title_home">Accueil</string>
     <string name="title_add_item">Ajouter un nouvel article</string>
     <string name="title_list_composition">Composition de la liste de courses</string>
+    <string name="title_list_old">Dernière liste de course</string>
+    <string name="title_list_new">Nouvelle liste de course</string>
     <string name="title_list_summary">Finalisation de la liste de courses</string>
     <string name="title_scan">Scan du code-barres</string>
+    <string name="title">Scan du code-barres</string>
 
     <string name="add_article">Ajouter un article</string>
+    <string name="start">Commencer</string>
     <string name="finish">Terminer</string>
     <string name="cancel">Annuler</string>
     <string name="total">Total</string>
@@ -21,4 +25,6 @@
     <string name="placeholder_article_name">Nom de l\'article</string>
     <string name="placeholder_category">Catégorie</string>
     <string name="placeholder_price">Prix</string>
+
+
 </resources>
