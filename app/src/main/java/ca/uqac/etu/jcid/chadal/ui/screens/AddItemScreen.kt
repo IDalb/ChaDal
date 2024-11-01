@@ -11,26 +11,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.* // For paddings, spacings etc.
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.* // Compose material 3
 import androidx.compose.runtime.* // For state variables
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.compose.rememberNavController
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.window.PopupProperties
 import ca.uqac.etu.jcid.chadal.R
 import ca.uqac.etu.jcid.chadal.data.Article
 import ca.uqac.etu.jcid.chadal.data.ArticleCategory
@@ -39,9 +34,9 @@ import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddItemScreen(
+    modifier: Modifier = Modifier,
     onCancelButtonClicked: () -> Unit = {},
-    onValidateButtonClicked: (Article) -> Unit = {},
-    modifier: Modifier = Modifier
+    onValidateButtonClicked: (Article) -> Unit = {}
 ) {
     var priceInput by remember { mutableStateOf("") }
     val price = priceInput.toDoubleOrNull() ?: 0.0
@@ -78,36 +73,46 @@ fun AddItemScreen(
             HorizontalDivider()
 
             OutlinedTextField(
+                label = { Text(stringResource(R.string.price)) },
+                singleLine = true,
+                trailingIcon = { Text(stringResource(R.string.currency_cad)) },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next
+                ),
                 value = priceInput,
-                onValueChange = {
-                    if (it.all { char -> char.isDigit() }) { // Assure que seuls les chiffres sont acceptés
-                        priceInput = it
-                    }
-                },
-                label = { Text("Prix") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                onValueChange = { if (it.toDoubleOrNull() != null) priceInput = it },
                 modifier = Modifier.fillMaxWidth()
             )
-            Box(modifier = Modifier.fillMaxWidth()) {
-                TextButton(onClick = { expanded = true }) {
-                    Text(if (selectedCategory.isEmpty()) "Catégorie" else selectedCategory)
-                    Icon(
-                        painter = painterResource(id = android.R.drawable.arrow_down_float),
-                        contentDescription = null
-                    )
-                }
-                DropdownMenu(
+
+
+            // Category dropdown
+            val categories = listOf("Produits laitiers", "Viandes", "Fruits", "Légumes", "Boissons")
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded }
+            ) {
+                OutlinedTextField(
+                    value = selectedCategory,
+                    onValueChange = {},
+                    label = { Text(stringResource(R.string.placeholder_category)) },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)},
+                    readOnly = true,
+                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+                    modifier = Modifier.menuAnchor().fillMaxWidth()
+                )
+                ExposedDropdownMenu (
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
                 ) {
-                    val categories = listOf("Produits laitiers", "Viandes", "Fruits", "Légumes", "Boissons")
                     categories.forEach { category ->
-                        DropdownMenuItem(onClick = {
-                            selectedCategory = category
-                            expanded = false
-                        }) {
-                            Text(text = category)
-                        }
+                        DropdownMenuItem(
+                            text = { Text(category) },
+                            onClick = {
+                                selectedCategory = category
+                                expanded = false
+                            }
+                        )
                     }
                 }
             }
@@ -122,6 +127,11 @@ fun AddItemScreen(
                 value = name,
                 onValueChange = { name = it },
                 label = { Text("Nom") },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
+                ),
                 modifier = Modifier.fillMaxWidth()
             )
 
