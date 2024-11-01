@@ -43,8 +43,11 @@ fun AddItemScreen(
     onValidateButtonClicked: (Article) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    var price by remember { mutableStateOf("") }
+    var priceInput by remember { mutableStateOf("") }
+    val price = priceInput.toDoubleOrNull() ?: 0.0
+
     var name by remember { mutableStateOf("") }
+
     var selectedCategory by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) } // Contrôle l'état d'expansion du menu déroulant
 
@@ -75,10 +78,10 @@ fun AddItemScreen(
             HorizontalDivider()
 
             OutlinedTextField(
-                value = price,
+                value = priceInput,
                 onValueChange = {
                     if (it.all { char -> char.isDigit() }) { // Assure que seuls les chiffres sont acceptés
-                        price = it
+                        priceInput = it
                     }
                 },
                 label = { Text("Prix") },
@@ -149,9 +152,9 @@ fun AddItemScreen(
                 Button(
                     onClick = { onValidateButtonClicked(
                         Article(
-                            "Abc",
+                            name,
                             ArticleCategory(R.string.placeholder_category, 0.5f),
-                            5f,
+                            price.toFloat(),
                             R.drawable.ic_launcher_foreground
                         )
                     ) },
