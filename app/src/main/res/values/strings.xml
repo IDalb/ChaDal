@@ -15,6 +15,8 @@
     <string name="total">Total</string>
     <string name="budget">Budget</string>
     <string name="article">Article(s)</string>
+    
+    <string name="optional_infos">Informations facultatives</string>
 
     <string name="article_name">Nom de l\'article</string>
     <string name="list_name">Nom de la liste</string>
@@ -22,6 +24,7 @@
     <string name="price">Prix</string>
 
     <string name="no_barcode">Pas de code-barres</string>
+    <string name="barcode_value">Code-barres : %s</string>
 
     <string name="placeholder_article_name">Nom de l\'article</string>
     <string name="placeholder_category">Catégorie</string>

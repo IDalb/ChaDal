@@ -21,14 +21,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.window.PopupProperties
 import ca.uqac.etu.jcid.chadal.R
 import ca.uqac.etu.jcid.chadal.data.Article
 import ca.uqac.etu.jcid.chadal.data.ArticleCategory
+import ca.uqac.etu.jcid.chadal.data.categories
 import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,8 +41,9 @@ fun AddItemScreen(
 
     var name by remember { mutableStateOf("") }
 
-    var selectedCategory by remember { mutableStateOf("") }
-    var expanded by remember { mutableStateOf(false) } // Contrôle l'état d'expansion du menu déroulant
+    // Controls expansion state of the category dropdown menu
+    var expanded by remember { mutableStateOf(false) }
+    var selectedCategory by remember { mutableStateOf(categories[0]) }
 
     Scaffold (
         topBar = {
@@ -65,7 +64,7 @@ fun AddItemScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = "Code-barres : 000000000000",
+                text = stringResource(R.string.barcode_value, "000000000000"),
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.Gray
             )
@@ -87,13 +86,12 @@ fun AddItemScreen(
 
 
             // Category dropdown
-            val categories = listOf("Produits laitiers", "Viandes", "Fruits", "Légumes", "Boissons")
             ExposedDropdownMenuBox(
                 expanded = expanded,
                 onExpandedChange = { expanded = !expanded }
             ) {
                 OutlinedTextField(
-                    value = selectedCategory,
+                    value = stringResource(selectedCategory.name),
                     onValueChange = {},
                     label = { Text(stringResource(R.string.placeholder_category)) },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)},
@@ -107,7 +105,7 @@ fun AddItemScreen(
                 ) {
                     categories.forEach { category ->
                         DropdownMenuItem(
-                            text = { Text(category) },
+                            text = { Text(stringResource(category.name)) },
                             onClick = {
                                 selectedCategory = category
                                 expanded = false
@@ -118,7 +116,7 @@ fun AddItemScreen(
             }
 
             Text(
-                text = "Informations facultatives",
+                text = stringResource(R.string.optional_infos),
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(top = 40.dp)
             )
@@ -126,7 +124,7 @@ fun AddItemScreen(
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = { Text("Nom") },
+                label = { Text(stringResource(R.string.article_name)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Text,
@@ -175,10 +173,6 @@ fun AddItemScreen(
             }
         }
     }
-}
-
-fun DropdownMenuItem(onClick: () -> Unit, interactionSource: @Composable () -> Unit) {
-
 }
 
 @Preview
