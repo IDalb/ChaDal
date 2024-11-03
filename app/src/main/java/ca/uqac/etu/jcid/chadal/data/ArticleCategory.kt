@@ -14,6 +14,6 @@ data class ArticleCategory(
 )
 
 val categories = listOf(
-    ArticleCategory(R.string.placeholder_category, 0f),
-    ArticleCategory(R.string.placeholder_category, .05f)
+    ArticleCategory(R.string.placeholder_category_1, 0f),
+    ArticleCategory(R.string.placeholder_category_2, .05f)
 )

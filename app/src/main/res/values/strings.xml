@@ -25,8 +25,12 @@
 
     <string name="no_barcode">Pas de code-barres</string>
     <string name="barcode_value">Code-barres : %s</string>
+    <string name="add_image">Ajouter une image</string>
 
     <string name="placeholder_article_name">Nom de l\'article</string>
     <string name="placeholder_category">Catégorie</string>
     <string name="placeholder_price">Prix</string>
+
+    <string name="placeholder_category_1">Catégorie 1</string>
+    <string name="placeholder_category_2">Catégorie 2</string>
 </resources>

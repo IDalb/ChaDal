@@ -76,4 +76,6 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:1.3.4")
     implementation("androidx.camera:camera-view:1.3.4")
     implementation("androidx.camera:camera-extensions:1.3.4")
+
+    implementation("io.coil-kt.coil3:coil-compose:3.0.0-rc02")
 }

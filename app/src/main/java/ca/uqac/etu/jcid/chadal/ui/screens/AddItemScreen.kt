@@ -1,5 +1,12 @@
 package ca.uqac.etu.jcid.chadal.ui.screens
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,21 +20,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.* // For paddings, spacings etc.
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.* // Compose material 3
 import androidx.compose.runtime.* // For state variables
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import ca.uqac.etu.jcid.chadal.R
 import ca.uqac.etu.jcid.chadal.data.Article
-import ca.uqac.etu.jcid.chadal.data.ArticleCategory
 import ca.uqac.etu.jcid.chadal.data.categories
 import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
+import coil3.compose.rememberAsyncImagePainter
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.Objects
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -133,19 +150,9 @@ fun AddItemScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Box(
-                modifier = Modifier
-                    .size(120.dp)
-                    .padding(16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(id = android.R.drawable.ic_menu_camera),
-                    contentDescription = null,
-                    modifier = Modifier.size(60.dp),
-                    colorFilter = ColorFilter.tint(Color.Black)
-                )
-            }
+            // Photo widget (slightly different between the app and the preview)
+            if (!LocalInspectionMode.current) TakePhotoFromCamera()
+            else PhotoCapture(Uri.EMPTY)
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -161,7 +168,7 @@ fun AddItemScreen(
                     onClick = { onValidateButtonClicked(
                         Article(
                             name,
-                            ArticleCategory(R.string.placeholder_category, 0.5f),
+                            selectedCategory,
                             price.toFloat(),
                             R.drawable.ic_launcher_foreground
                         )
@@ -173,6 +180,91 @@ fun AddItemScreen(
             }
         }
     }
+}
+
+@Composable
+fun PhotoCapture(capturedImageUri: Uri, captureFunction: ()->Unit = {}) {
+    val composable: @Composable ()->Unit
+
+    if (capturedImageUri.path?.isNotEmpty() == true) {
+        composable = {
+                Image(
+                painter = rememberAsyncImagePainter(capturedImageUri),
+                contentScale = ContentScale.Crop,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    } else {
+        composable = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.add_photo),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.size(40.dp)
+                )
+                Text(stringResource(R.string.add_image))
+            }
+        }
+    }
+
+    OutlinedButton(
+        onClick = captureFunction,
+        shape = RoundedCornerShape(8.dp),
+        contentPadding = PaddingValues(0.dp),
+        modifier = Modifier
+            .height(200.dp)
+            .aspectRatio(1f, true)
+    ) { composable.invoke() }
+}
+
+@Composable
+fun TakePhotoFromCamera() {
+    val context = LocalContext.current
+    val file = context.createImageFile()
+    val uri = FileProvider.getUriForFile(
+        Objects.requireNonNull(context),
+        context.packageName + ".provider", file
+    )
+
+    var capturedImageUri by remember { mutableStateOf(Uri.EMPTY) }
+    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
+        capturedImageUri = uri
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) {
+        if (it) {
+            Toast.makeText(context, "Permission granted!", Toast.LENGTH_SHORT).show()
+            cameraLauncher.launch(uri)
+        } else {
+            Toast.makeText(context, "Permission denied...", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    PhotoCapture(capturedImageUri) {
+        val permissionCheckResult =
+            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+
+        if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
+            cameraLauncher.launch(uri)
+        } else {
+            permissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
+}
+
+fun Context.createImageFile(): File {
+    val timeStamp = SimpleDateFormat("yyyy_MM_dd_HH-mm_ss", Locale.US).format(Date())
+    val imageFileName = "ARTICLE_IMG_$timeStamp"
+    val image = File.createTempFile(imageFileName, ".jpg", externalCacheDir)
+
+    return image
 }
 
 @Preview
