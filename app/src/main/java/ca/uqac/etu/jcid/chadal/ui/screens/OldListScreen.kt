@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import ca.uqac.etu.jcid.chadal.R
 import ca.uqac.etu.jcid.chadal.ui.Component.CardList
 import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
@@ -27,7 +28,7 @@ import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OldListScreen(
-    navController: NavController? = null, // NavController est maintenant optionnel
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -40,25 +41,16 @@ fun OldListScreen(
                 modifier = Modifier
             )
         },
-        bottomBar = {
-            if (navController != null) {
-                BottomNavigationBar(
-                    navController = navController,
-                    onOldListButtonClicked = {
-                        navController?.navigate("previous_lists")
-                    }
-                )
-            }
-        }
+        bottomBar = { BottomNavigationBar(navController = navController) }
     ) { paddingValues ->
         Column(
             modifier = modifier
                 .padding(paddingValues)
-                .padding(16.dp, 32.dp)
+                .padding(8.dp, 16.dp)
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             Text(
                 text = "Liste de course",
                 style = MaterialTheme.typography.headlineLarge,
@@ -68,9 +60,9 @@ fun OldListScreen(
             LazyColumn(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                items(1) {
+                items(3) {
                     CardList(
-                        modifier = Modifier.padding(20.dp)
+                        modifier = Modifier.padding(10.dp)
                     )
                 }
             }
@@ -82,6 +74,6 @@ fun OldListScreen(
 @Composable
 fun OldListScreenPreview() {
     ChaDalTheme {
-        OldListScreen(navController = null) // NavController est nul pour l'aperçu
+        OldListScreen( navController = rememberNavController()) // NavController est nul pour l'aperçu
     }
 }

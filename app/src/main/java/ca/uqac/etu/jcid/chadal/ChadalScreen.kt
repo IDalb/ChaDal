@@ -4,19 +4,19 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import ca.uqac.etu.jcid.chadal.ui.ShoppingListViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import ca.uqac.etu.jcid.chadal.ui.ShoppingListViewModel
 import ca.uqac.etu.jcid.chadal.ui.screens.AddItemScreen
 import ca.uqac.etu.jcid.chadal.ui.screens.BottomNavigationBar
 import ca.uqac.etu.jcid.chadal.ui.screens.HomeScreen
 import ca.uqac.etu.jcid.chadal.ui.screens.ListCompositionScreen
 import ca.uqac.etu.jcid.chadal.ui.screens.ListSummaryScreen
-import ca.uqac.etu.jcid.chadal.ui.screens.ScanScreen
 import ca.uqac.etu.jcid.chadal.ui.screens.OldListScreen
+import ca.uqac.etu.jcid.chadal.ui.screens.ScanScreen
 
 enum class ChadalScreens {
     Home,
@@ -24,7 +24,8 @@ enum class ChadalScreens {
     Scan,
     AddItem,
     ListSummary,
-    OldList
+    OldList,
+    ListProduct,
 }
 
 @Composable
@@ -34,16 +35,7 @@ fun ChadalApp(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-     Scaffold (
-         bottomBar = {
-             BottomNavigationBar(
-                 navController = navController,
-                 onOldListButtonClicked = {
-                     navController.navigate(ChadalScreens.OldList.name)
-                 }
-             )
-         }
-     ) { it
+     Scaffold () { it
         NavHost(
             navController = navController,
             startDestination = ChadalScreens.Home.name
@@ -55,6 +47,9 @@ fun ChadalApp(
                     },
                     navController = navController
                 )
+            }
+            composable(route = ChadalScreens.OldList.name) {
+                OldListScreen(navController)
             }
             composable(route = ChadalScreens.ListComposition.name) {
                 ListCompositionScreen(
@@ -95,9 +90,6 @@ fun ChadalApp(
                         navController.popBackStack(ChadalScreens.ListComposition.name, false)
                     }
                 )
-            }
-            composable(route = ChadalScreens.OldList.name) {
-
             }
         }
     }

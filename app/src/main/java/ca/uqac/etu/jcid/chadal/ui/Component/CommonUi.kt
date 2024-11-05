@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -32,34 +33,34 @@ fun CardList(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            // Titre en haut
+
             Text(
-                text = "placeholder",
+                text = "placeholderrrrrr",
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
-            // Prix en dessous du titre
+
             Text(
                 text = "price",
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(bottom = 16.dp)
+                modifier = Modifier.padding(bottom = 16.dp).height(60.dp)
+
             )
 
-            Spacer(modifier = Modifier.weight(1f)) // Espace flexible pour pousser les éléments en bas
+            Spacer(modifier = Modifier.weight(1f))
 
-            // Ligne pour le nombre d'articles et la date
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // Nombre d'articles en bas à gauche
+
                 Text(
                     text = "Articles",
                     style = MaterialTheme.typography.bodySmall
                 )
 
-                // Date en bas à droite
                 Text(
                     text = "date",
                     style = MaterialTheme.typography.bodySmall
