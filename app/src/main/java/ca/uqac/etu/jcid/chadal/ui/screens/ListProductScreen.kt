@@ -42,8 +42,6 @@ import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
 @Composable
 fun ListProductScreen(
     modifier: Modifier = Modifier,
-    onAddItemButtonClicked: () -> Unit = {},
-    onFinishShoppingButtonClicked: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -55,48 +53,9 @@ fun ListProductScreen(
                 modifier = modifier
             )
         },
-        floatingActionButton = {
-            ExtendedFloatingActionButton (
-                onClick = { onAddItemButtonClicked() },
-                icon = { Icon(Icons.Filled.Add, null) },
-                text = { Text(stringResource(R.string.add_article)) }
-            )
-        },
+
         bottomBar = {
             BottomAppBar {
-                Column {
-                    LinearProgressIndicator(
-                        progress = { 0.70f },
-                        modifier = Modifier.fillMaxWidth().height(8.dp)
-                    )
-                    Row (
-                        modifier = Modifier.fillMaxWidth().padding(16.dp, 8.dp)
-                    ) {
-                        OutlinedButton(
-                            onClick = onFinishShoppingButtonClicked
-                        ) {
-                            Icon(
-                                Icons.Filled.Done,
-                                null,
-                                modifier = Modifier.padding(0.dp, 0.dp, 8.dp, 0.dp)
-                            )
-                            Text(stringResource(R.string.finish))
-                        }
-                        Column (
-                            modifier = Modifier.weight(1f),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = stringResource(R.string.total) + ": " + "00" + stringResource(R.string.currency_cad),
-                                style = MaterialTheme.typography.titleLarge
-                            )
-                            Text(
-                                text = stringResource(R.string.budget) + ": " + "000" + stringResource(R.string.currency_cad),
-                                style = MaterialTheme.typography.titleSmall
-                            )
-                        }
-                    }
-                }
             }
         }
     ) { innerPadding ->
@@ -152,6 +111,6 @@ fun ArticleCard2(
 @Composable
 fun ListProductScreenPreview() {
     ChaDalTheme {
-        ListCompositionScreen()
+        ListProductScreen()
     }
 }
