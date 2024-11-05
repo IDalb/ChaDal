@@ -56,7 +56,9 @@ fun HomeScreen(
                 modifier = Modifier
             )
         },
-        bottomBar = { BottomNavigationBar(navController) }
+        bottomBar = { BottomNavigationBar(navController,                 onOldListButtonClicked = {
+            navController.navigate("previous_lists")
+        }) }
     ) { paddingValues ->
         Column(
             modifier = modifier
@@ -141,19 +143,25 @@ fun HomeScreen(
 }
 
 @Composable
-fun BottomNavigationBar(navController: NavController) {
+fun BottomNavigationBar(navController: NavController, onOldListButtonClicked: () -> Unit) {
     var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
 
     NavigationBar {
         NavigationBarItem(
             selected = selectedTabIndex == 0,
-            onClick = { selectedTabIndex = 0 },
+            onClick = {
+                selectedTabIndex = 0
+                navController.navigate(ChadalScreens.Home.name)
+            },
             icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
-            label = {  Text(stringResource(R.string.title_home)) }
+            label = { Text(stringResource(R.string.title_home)) }
         )
         NavigationBarItem(
             selected = selectedTabIndex == 1,
-            onClick = { selectedTabIndex = 1 },
+            onClick = {
+                selectedTabIndex = 1
+                onOldListButtonClicked() // Navigate to Old List screen
+            },
             icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = "Previous lists") },
             label = { Text("Anciennes listes") }
         )
@@ -165,6 +173,7 @@ fun BottomNavigationBar(navController: NavController) {
         )
     }
 }
+
 
 
 
