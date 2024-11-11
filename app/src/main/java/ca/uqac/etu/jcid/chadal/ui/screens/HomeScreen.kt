@@ -144,10 +144,11 @@ fun HomeScreen(
                     .weight(1f)
             ) {
                 items(3) {
+                    /*
                     CardList(course = ShoppingList(30,"lundi"),
                         modifier = Modifier
                             .padding(20.dp)
-                    )
+                    )*/
                 }
             }
             Spacer(modifier = Modifier.height(20.dp))
