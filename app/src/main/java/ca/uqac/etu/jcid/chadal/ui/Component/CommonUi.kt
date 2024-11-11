@@ -15,14 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ca.uqac.etu.jcid.chadal.ChadalApp
+import ca.uqac.etu.jcid.chadal.data.ShoppingList
 import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
 
-/**
- * Composable that displays formatted [price] that will be formatted and displayed on screen
- */
 @Composable
 fun CardList(
-
+    course: ShoppingList,
     modifier: Modifier = Modifier
 ) {
     OutlinedCard(
@@ -33,23 +31,21 @@ fun CardList(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-
             Text(
-                text = "placeholderrrrrr",
+                text = "Course: ${course.budget}",
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
-
             Text(
-                text = "price",
+                text = "Budget: ${course.budget}",
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(bottom = 16.dp).height(60.dp)
-
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .height(60.dp)
             )
 
             Spacer(modifier = Modifier.weight(1f))
-
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -57,12 +53,7 @@ fun CardList(
             ) {
 
                 Text(
-                    text = "Articles",
-                    style = MaterialTheme.typography.bodySmall
-                )
-
-                Text(
-                    text = "date",
+                    text = "Date: ${course.date}",
                     style = MaterialTheme.typography.bodySmall
                 )
             }
@@ -70,14 +61,6 @@ fun CardList(
     }
 }
 
-@Preview
-@Composable
-fun CardListPreview() {
-    ChaDalTheme {
-        CardList( modifier = Modifier)
-    }
-
-    }
 
 
 

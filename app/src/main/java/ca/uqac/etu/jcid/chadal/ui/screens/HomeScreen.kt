@@ -36,23 +36,28 @@ import ca.uqac.etu.jcid.chadal.ChadalScreens
 import ca.uqac.etu.jcid.chadal.R
 import ca.uqac.etu.jcid.chadal.ui.Component.CardList
 import androidx.compose.runtime.*
-import ca.uqac.etu.jcid.chadal.data.Course
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import ca.uqac.etu.jcid.chadal.data.DataStoreManager
+
+import ca.uqac.etu.jcid.chadal.data.ShoppingList
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onStartShoppingButtonClicked: () -> Unit,
     navController: NavController,
+    dataStoreManager: DataStoreManager,
     modifier: Modifier = Modifier
 ) {
-    // Initialise Firebase Database
-    val database: DatabaseReference = FirebaseDatabase.getInstance().getReference("Courses")
+    // Initialise local database
 
+
+    val coroutineScope = rememberCoroutineScope()
+    val date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
     val showText = remember { mutableStateOf(false) }
     val budgetText = remember { mutableStateOf("") }
 
@@ -108,9 +113,12 @@ fun HomeScreen(
 
                     Button(
                         onClick = {
+                            val budget = budgetText.value.toIntOrNull() ?: 0
+                            coroutineScope.launch {
+                                dataStoreManager.saveShoppingList(budget, date)
+                                showText.value = true
+                            }
                             onStartShoppingButtonClicked()
-                            writeNewShoppingList(database, budgetText.value)
-                            showText.value = true
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -136,7 +144,7 @@ fun HomeScreen(
                     .weight(1f)
             ) {
                 items(3) {
-                    CardList(
+                    CardList(course = ShoppingList(30,"lundi"),
                         modifier = Modifier
                             .padding(20.dp)
                     )
@@ -153,20 +161,7 @@ fun HomeScreen(
     }
 }
 
-fun writeNewShoppingList(database: DatabaseReference, budget: String) {
-    val newCourseId = database.push().key ?: return
-    val currentDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
-    val newCourse = Course(
-        budget = budget,
-        date = currentDate,
-        articleCount = 0
-    )
-    database.child(newCourseId).setValue(newCourse).addOnCompleteListener { task ->
-        if (task.isSuccessful) {
-            // Afficher un message ou mettre à jour l'interface utilisateur si besoin
-        }
-    }
-}
+
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
@@ -202,7 +197,7 @@ fun BottomNavigationBar(navController: NavController) {
 
 
 
-
+/*
 @Preview
 @Composable
 fun HomeScreenPreview() {
@@ -213,3 +208,4 @@ fun HomeScreenPreview() {
         )
     }
 }
+*/

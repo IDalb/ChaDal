@@ -14,6 +14,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -21,7 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import ca.uqac.etu.jcid.chadal.R
+import ca.uqac.etu.jcid.chadal.data.DataStoreManager
+import ca.uqac.etu.jcid.chadal.data.ShoppingList
 import ca.uqac.etu.jcid.chadal.ui.Component.CardList
 import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
 
@@ -29,8 +32,14 @@ import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
 @Composable
 fun OldListScreen(
     navController: NavController,
+    dataStoreManager: DataStoreManager,
     modifier: Modifier = Modifier
 ) {
+    // Observe the latest saved shopping list from DataStore
+    val lastShoppingList by dataStoreManager.shoppingListFlow.collectAsState(
+        initial = ShoppingList(0, "Date non disponible")
+    )
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -60,8 +69,10 @@ fun OldListScreen(
             LazyColumn(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                items(3) {
+                item {
+                    // Display the latest shopping list in the CardList
                     CardList(
+                        course = lastShoppingList,
                         modifier = Modifier.padding(10.dp)
                     )
                 }
@@ -70,6 +81,7 @@ fun OldListScreen(
     }
 }
 
+/*
 @Preview
 @Composable
 fun OldListScreenPreview() {
@@ -77,3 +89,4 @@ fun OldListScreenPreview() {
         OldListScreen( navController = rememberNavController()) // NavController est nul pour l'aperçu
     }
 }
+*/
