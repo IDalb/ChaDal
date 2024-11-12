@@ -1,6 +1,5 @@
 package ca.uqac.etu.jcid.chadal.data
 
-// ShoppingListEntity.kt
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 

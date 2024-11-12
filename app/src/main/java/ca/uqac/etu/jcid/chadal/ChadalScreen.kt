@@ -11,6 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import ca.uqac.etu.jcid.chadal.data.AppDatabase
 import ca.uqac.etu.jcid.chadal.data.DataStoreManager
 import ca.uqac.etu.jcid.chadal.ui.ShoppingListViewModel
 import ca.uqac.etu.jcid.chadal.ui.screens.AddItemScreen
@@ -38,8 +39,9 @@ fun ChadalApp(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
-    val dataStoreManager = remember { DataStoreManager(context) }
-     Scaffold () { it
+    val shoppingListDao = remember { AppDatabase.getDatabase(context).shoppingListDao() }
+    val dataStoreManager = remember { DataStoreManager(context, shoppingListDao) }
+    Scaffold () { it
         NavHost(
             navController = navController,
             startDestination = ChadalScreens.Home.name
@@ -55,7 +57,7 @@ fun ChadalApp(
             }
             composable(route = ChadalScreens.OldList.name) {
                 OldListScreen(    navController = navController,
-                    dataStoreManager = dataStoreManager)
+                    shoppingListDao = shoppingListDao)
             }
             composable(route = ChadalScreens.ListComposition.name) {
                 ListCompositionScreen(
@@ -100,3 +102,4 @@ fun ChadalApp(
         }
     }
 }
+

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -25,20 +26,18 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import ca.uqac.etu.jcid.chadal.data.DataStoreManager
 import ca.uqac.etu.jcid.chadal.data.ShoppingList
+import ca.uqac.etu.jcid.chadal.data.ShoppingListDao
 import ca.uqac.etu.jcid.chadal.ui.Component.CardList
 import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OldListScreen(
     navController: NavController,
-    dataStoreManager: DataStoreManager,
+    shoppingListDao: ShoppingListDao, // Ajout du DAO en paramètre
     modifier: Modifier = Modifier
 ) {
-    // Observe the latest saved shopping list from DataStore
-    val lastShoppingList by dataStoreManager.shoppingListFlow.collectAsState(
-        initial = ShoppingList(0, "Date non disponible")
-    )
+
+    val shoppingLists by shoppingListDao.getAllShoppingLists().collectAsState(initial = emptyList())
 
     Scaffold(
         topBar = {
@@ -61,7 +60,7 @@ fun OldListScreen(
         ) {
             Spacer(modifier = Modifier.height(20.dp))
             Text(
-                text = "Liste de course",
+                text = "Liste de courses",
                 style = MaterialTheme.typography.headlineLarge,
                 modifier = Modifier.padding(bottom = 24.dp)
             )
@@ -69,10 +68,9 @@ fun OldListScreen(
             LazyColumn(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                item {
-                    // Display the latest shopping list in the CardList
+                items(shoppingLists) { shoppingList ->
                     CardList(
-                        course = lastShoppingList,
+                        course = shoppingList,
                         modifier = Modifier.padding(10.dp)
                     )
                 }
@@ -80,6 +78,7 @@ fun OldListScreen(
         }
     }
 }
+
 
 /*
 @Preview

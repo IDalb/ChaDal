@@ -5,11 +5,12 @@ import androidx.room.Insert
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 
+
 @Dao
 interface ShoppingListDao {
     @Insert
-    suspend fun insertShoppingList(shoppingList: ShoppingList)
+    fun insertShoppingList(shoppingList: ShoppingListEntity) :Long
 
     @Query("SELECT * FROM shopping_list ORDER BY id DESC")
-    fun getAllShoppingLists(): Flow<List<ShoppingList>>
+    fun getAllShoppingLists(): Flow<List<ShoppingListEntity>>
 }

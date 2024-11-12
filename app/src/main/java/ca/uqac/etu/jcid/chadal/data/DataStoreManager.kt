@@ -11,12 +11,16 @@ import kotlinx.coroutines.flow.map
 
 val Context.dataStore by preferencesDataStore(name = "shopping_list")
 
-class DataStoreManager(private val context: Context) {
+class DataStoreManager(
+    private val context: Context,
+    private val shoppingListDao: ShoppingListDao
+) {
 
     companion object {
         val BUDGET_KEY = intPreferencesKey("budget_key")
         val DATE_KEY = stringPreferencesKey("date_key")
     }
+
 
     val shoppingListFlow: Flow<ShoppingList> = context.dataStore.data
         .map { preferences ->
@@ -25,10 +29,17 @@ class DataStoreManager(private val context: Context) {
             ShoppingList(budget, date)
         }
 
-    suspend fun saveShoppingList(budget: Int, date: String) {
+
+    suspend fun saveShoppingListToDataStore(budget: Int, date: String) {
         context.dataStore.edit { preferences ->
             preferences[BUDGET_KEY] = budget
             preferences[DATE_KEY] = date
         }
+    }
+
+
+    suspend fun saveShoppingListToDatabase(budget: Int, date: String) {
+        val shoppingListEntity = ShoppingListEntity(budget = budget, date = date)
+        shoppingListDao.insertShoppingList(shoppingListEntity)
     }
 }

@@ -16,11 +16,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ca.uqac.etu.jcid.chadal.ChadalApp
 import ca.uqac.etu.jcid.chadal.data.ShoppingList
+import ca.uqac.etu.jcid.chadal.data.ShoppingListEntity
 import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
 
 @Composable
 fun CardList(
-    course: ShoppingList,
+    course: ShoppingListEntity, // Modification pour accepter ShoppingListEntity
     modifier: Modifier = Modifier
 ) {
     OutlinedCard(

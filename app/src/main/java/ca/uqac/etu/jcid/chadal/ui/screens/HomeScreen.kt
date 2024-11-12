@@ -39,7 +39,11 @@ import androidx.compose.runtime.*
 import ca.uqac.etu.jcid.chadal.data.DataStoreManager
 
 import ca.uqac.etu.jcid.chadal.data.ShoppingList
+import ca.uqac.etu.jcid.chadal.data.ShoppingListDao
+import ca.uqac.etu.jcid.chadal.data.ShoppingListEntity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -114,14 +118,22 @@ fun HomeScreen(
                     Button(
                         onClick = {
                             val budget = budgetText.value.toIntOrNull() ?: 0
+                            val currentDate = date // Remplacez `date` par la valeur de date
+
                             coroutineScope.launch {
-                                dataStoreManager.saveShoppingList(budget, date)
+
+                                withContext(Dispatchers.IO) {
+                                    dataStoreManager.saveShoppingListToDatabase(budget, currentDate)
+                                }
+
                                 showText.value = true
                             }
+
                             onStartShoppingButtonClicked()
                         },
                         modifier = Modifier.fillMaxWidth()
-                    ) {
+                    )
+                    {
                         Text(text = "Commencer")
                     }
                 }
