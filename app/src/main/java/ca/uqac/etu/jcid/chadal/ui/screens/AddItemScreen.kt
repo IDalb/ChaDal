@@ -3,6 +3,7 @@ package ca.uqac.etu.jcid.chadal.ui.screens
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -62,6 +63,10 @@ fun AddItemScreen(
     var expanded by remember { mutableStateOf(false) }
     var selectedCategory by remember { mutableStateOf(categories[0]) }
 
+    val context = LocalContext.current
+    var uri by remember { mutableStateOf(Uri.EMPTY) }
+    var image = ContextCompat.getDrawable(context, R.drawable.ic_launcher_background)
+
     Scaffold (
         topBar = {
             TopAppBar(
@@ -90,6 +95,7 @@ fun AddItemScreen(
 
             OutlinedTextField(
                 label = { Text(stringResource(R.string.price)) },
+                placeholder = { Text("0") },
                 singleLine = true,
                 trailingIcon = { Text(stringResource(R.string.currency_cad)) },
                 keyboardOptions = KeyboardOptions.Default.copy(
@@ -97,7 +103,11 @@ fun AddItemScreen(
                     imeAction = ImeAction.Next
                 ),
                 value = priceInput,
-                onValueChange = { if (it.toDoubleOrNull() != null) priceInput = it },
+                onValueChange = {
+                    if (it.toDoubleOrNull() != null || it.isEmpty())
+                        priceInput = it
+                                },
+                isError = priceInput.isNotEmpty() && priceInput.toDoubleOrNull() == null,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -151,8 +161,15 @@ fun AddItemScreen(
             )
 
             // Photo widget (slightly different between the app and the preview)
-            if (!LocalInspectionMode.current) TakePhotoFromCamera()
-            else PhotoCapture(Uri.EMPTY)
+            if (!LocalInspectionMode.current) {
+                TakePhotoFromCamera() { uri = it }
+                if (uri != Uri.EMPTY) {
+                    val inputStream = LocalContext.current.contentResolver.openInputStream(uri)
+                    image = Drawable.createFromStream(inputStream, uri.toString())
+                }
+            }
+            else
+                PhotoCapture(Uri.EMPTY)
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -169,8 +186,8 @@ fun AddItemScreen(
                         Article(
                             name,
                             selectedCategory,
-                            price.toFloat(),
-                            R.drawable.ic_launcher_foreground
+                            price,
+                            image
                         )
                     ) },
                     modifier = Modifier.weight(1f).padding(start = 8.dp)
@@ -180,6 +197,10 @@ fun AddItemScreen(
             }
         }
     }
+}
+
+fun CheckFieldsAndSubmit() {
+
 }
 
 @Composable
@@ -223,7 +244,7 @@ fun PhotoCapture(capturedImageUri: Uri, captureFunction: ()->Unit = {}) {
 }
 
 @Composable
-fun TakePhotoFromCamera() {
+fun TakePhotoFromCamera(setMethod: (Uri)->Unit) {
     val context = LocalContext.current
     val file = context.createImageFile()
     val uri = FileProvider.getUriForFile(
@@ -246,6 +267,8 @@ fun TakePhotoFromCamera() {
             Toast.makeText(context, "Permission denied...", Toast.LENGTH_SHORT).show()
         }
     }
+
+    setMethod(capturedImageUri)
 
     PhotoCapture(capturedImageUri) {
         val permissionCheckResult =

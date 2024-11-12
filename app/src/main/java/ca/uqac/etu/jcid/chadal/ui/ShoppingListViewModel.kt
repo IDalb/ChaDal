@@ -30,8 +30,8 @@ class ShoppingListViewModel : ViewModel() {
         }
     }
 
-    private fun calculateTotal(): Float {
-        var total:Float = 0f
+    private fun calculateTotal(): Double {
+        var total:Double = 0.0
         _uiState.value.articles.forEach {
             // Tax calculation & application
             total += it.price * (1 + it.category.taxPercentage)

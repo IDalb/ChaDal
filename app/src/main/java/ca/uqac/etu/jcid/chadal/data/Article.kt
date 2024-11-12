@@ -1,10 +1,10 @@
 package ca.uqac.etu.jcid.chadal.data
 
-import androidx.annotation.DrawableRes
+import android.graphics.drawable.Drawable
 
 data class Article(
     val name: String = "",
     val category: ArticleCategory,
-    val price: Float,
-    @DrawableRes val imageResourceId: Int
+    val price: Double,
+    val imageResource: Drawable?
 )

@@ -38,12 +38,13 @@ import ca.uqac.etu.jcid.chadal.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    onStartShoppingButtonClicked: () -> Unit,
+    onStartShoppingButtonClicked: (Double) -> Unit,
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
     val showText = remember { mutableStateOf(false) }
-    val budgetText = remember { mutableStateOf("") }
+    var budgetText by remember { mutableStateOf("") }
+    val budget = budgetText.toDoubleOrNull() ?: 0.0
 
     Scaffold(
         topBar = {
@@ -81,10 +82,10 @@ fun HomeScreen(
                     )
 
                     TextField(
-                        value = budgetText.value,
+                        value = budgetText,
                         onValueChange = {
                             if (it.all { char -> char.isDigit() }) {
-                                budgetText.value = it
+                                budgetText = it
                             }
                         },
                         label = { Text("Budget") },
@@ -95,10 +96,10 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(20.dp))
 
                     Button(
-                        onClick = onStartShoppingButtonClicked,
+                        onClick = { onStartShoppingButtonClicked(budget) },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(text = "Commencer")
+                        Text(text = stringResource(R.string.start))
                     }
                 }
             }
