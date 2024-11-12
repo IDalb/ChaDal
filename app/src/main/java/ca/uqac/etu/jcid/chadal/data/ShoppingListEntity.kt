@@ -9,4 +9,5 @@ data class ShoppingListEntity(
     val budget: Int,
     val date: String,
     val article: Int
+
 )

@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -37,6 +38,7 @@ import ca.uqac.etu.jcid.chadal.R
 import ca.uqac.etu.jcid.chadal.ui.Component.CardList
 import androidx.compose.runtime.*
 import ca.uqac.etu.jcid.chadal.data.DataStoreManager
+import ca.uqac.etu.jcid.chadal.data.ShoppingListDao
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,16 +54,16 @@ fun HomeScreen(
     onStartShoppingButtonClicked: () -> Unit,
     navController: NavController,
     dataStoreManager: DataStoreManager,
+    shoppingListDao: ShoppingListDao,
     modifier: Modifier = Modifier
 ) {
-    // Initialise local database
 
 
     val coroutineScope = rememberCoroutineScope()
     val date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
     val showText = remember { mutableStateOf(false) }
     val budgetText = remember { mutableStateOf("") }
-
+    val shoppingLists by shoppingListDao.getAllShoppingLists().collectAsState(initial = emptyList())
     Scaffold(
         topBar = {
             TopAppBar(
@@ -152,13 +154,13 @@ fun HomeScreen(
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                items(3) {
-                    /*
-                    CardList(course = ShoppingList(30,"lundi"),
-                        modifier = Modifier
-                            .padding(20.dp)
-                    )*/
+                items(shoppingLists) { shoppingList ->
+                    CardList(
+                        course = shoppingList,
+                        modifier = Modifier.padding(10.dp)
+                    )
                 }
+
             }
             Spacer(modifier = Modifier.height(20.dp))
             Button(

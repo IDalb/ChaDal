@@ -20,7 +20,7 @@ import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
 
 @Composable
 fun CardList(
-    course: ShoppingListEntity, // Modification pour accepter ShoppingListEntity
+    course: ShoppingListEntity,
     modifier: Modifier = Modifier
 ) {
     OutlinedCard(
@@ -32,7 +32,7 @@ fun CardList(
                 .padding(16.dp)
         ) {
             Text(
-                text = "Course: ${course.budget}",
+                text = "Course: Nombre d'article ${course.article}",
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(bottom = 8.dp)
             )

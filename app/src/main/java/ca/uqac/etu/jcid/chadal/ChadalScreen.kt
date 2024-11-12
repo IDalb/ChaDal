@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ca.uqac.etu.jcid.chadal.data.AppDatabase
 import ca.uqac.etu.jcid.chadal.data.DataStoreManager
+import ca.uqac.etu.jcid.chadal.data.ShoppingListDao
 import ca.uqac.etu.jcid.chadal.ui.ShoppingListViewModel
 import ca.uqac.etu.jcid.chadal.ui.screens.AddItemScreen
 import ca.uqac.etu.jcid.chadal.ui.screens.BottomNavigationBar
@@ -29,7 +30,6 @@ enum class ChadalScreens {
     AddItem,
     ListSummary,
     OldList,
-    ListProduct,
 }
 
 @Composable
@@ -52,7 +52,8 @@ fun ChadalApp(
                         navController.navigate(ChadalScreens.ListComposition.name)
                     },
                     navController = navController,
-                    dataStoreManager = dataStoreManager // Passe l'instance de DataStoreManager ici
+                    dataStoreManager = dataStoreManager,
+                    shoppingListDao = shoppingListDao,
                 )
             }
             composable(route = ChadalScreens.OldList.name) {
