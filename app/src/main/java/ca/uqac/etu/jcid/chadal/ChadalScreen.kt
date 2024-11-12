@@ -13,10 +13,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ca.uqac.etu.jcid.chadal.data.AppDatabase
 import ca.uqac.etu.jcid.chadal.data.DataStoreManager
-import ca.uqac.etu.jcid.chadal.data.ShoppingListDao
 import ca.uqac.etu.jcid.chadal.ui.ShoppingListViewModel
 import ca.uqac.etu.jcid.chadal.ui.screens.AddItemScreen
-import ca.uqac.etu.jcid.chadal.ui.screens.BottomNavigationBar
 import ca.uqac.etu.jcid.chadal.ui.screens.HomeScreen
 import ca.uqac.etu.jcid.chadal.ui.screens.ListCompositionScreen
 import ca.uqac.etu.jcid.chadal.ui.screens.ListSummaryScreen

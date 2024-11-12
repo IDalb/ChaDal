@@ -18,7 +18,7 @@ class DataStoreManager(
 
 
 
-    suspend fun saveShoppingListToDatabase(budget: Int, date: String, article: Int) {
+    fun saveShoppingListToDatabase(budget: Int, date: String, article: Int) {
         val shoppingListEntity = ShoppingListEntity(budget = budget, date = date, article = article)
         shoppingListDao.insertShoppingList(shoppingListEntity)
     }
