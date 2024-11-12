@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import ca.uqac.etu.jcid.chadal.data.AppDatabase
 import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
 
 class MainActivity : ComponentActivity() {

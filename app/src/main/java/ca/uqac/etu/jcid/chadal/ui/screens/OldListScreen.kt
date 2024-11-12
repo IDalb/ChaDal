@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import ca.uqac.etu.jcid.chadal.data.DataStoreManager
-import ca.uqac.etu.jcid.chadal.data.ShoppingList
 import ca.uqac.etu.jcid.chadal.data.ShoppingListDao
 import ca.uqac.etu.jcid.chadal.ui.Component.CardList
 import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme

@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class ShoppingListEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val budget: Int,
-    val date: String
+    val date: String,
+    val article: Int
 )
