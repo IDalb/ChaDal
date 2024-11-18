@@ -12,6 +12,17 @@ class ShoppingListViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(ShoppingListUiState())
     val uiState: StateFlow<ShoppingListUiState> = _uiState.asStateFlow()
 
+    fun resetShoppingList() {
+        _uiState.update { currentState ->
+            currentState.copy(
+                articles = listOf(),
+                total = 0.0,
+                budget = null,
+                name = ""
+            )
+        }
+    }
+
     fun addArticle(article: Article) {
         _uiState.update { currentState ->
             currentState.copy(

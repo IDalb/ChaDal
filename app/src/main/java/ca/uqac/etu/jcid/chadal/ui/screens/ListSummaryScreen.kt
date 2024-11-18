@@ -1,5 +1,8 @@
 package ca.uqac.etu.jcid.chadal.ui.screens
 
+import android.annotation.SuppressLint
+import android.app.Application
+import androidx.camera.core.impl.utils.ContextUtil
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -27,16 +30,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ca.uqac.etu.jcid.chadal.R
+import ca.uqac.etu.jcid.chadal.data.ShoppingListUiState
 import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
 
+@SuppressLint("DefaultLocale")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListSummaryScreen(
     modifier: Modifier = Modifier,
+    shoppingList: ShoppingListUiState,
     onCancelButtonClicked: () -> Unit = {},
     onFinishButtonClicked: () -> Unit = {}
 ) {
@@ -59,31 +66,52 @@ fun ListSummaryScreen(
                 .padding(16.dp, 32.dp),
         ) {
             Text(
-                text = "11" + " " + stringResource(R.string.article),
+                text = LocalContext.current.resources.getQuantityString(
+                    R.plurals.article_number,
+                    shoppingList.articles.size,
+                    shoppingList.articles.size
+                    ),
                 style = MaterialTheme.typography.bodyLarge,
             )
 
             HorizontalDivider(modifier = modifier.padding(16.dp, 24.dp))
 
             Text(
-                text = stringResource(R.string.total) + ": " + "00" + stringResource(R.string.currency_cad),
+                text = stringResource(R.string.total,
+                    String.format("%.2f", shoppingList.total),
+                    stringResource(R.string.currency_cad)
+                ),
                 style = MaterialTheme.typography.titleLarge
             )
             Text(
-                text = stringResource(R.string.budget) + ": " + "000" + stringResource(R.string.currency_cad),
+                text = if (shoppingList.budget != null) stringResource(
+                    R.string.budget,
+                    String.format("%.2f", shoppingList.budget),
+                    stringResource(R.string.currency_cad)
+                )
+                else stringResource(
+                    R.string.budget,
+                    stringResource(R.string.unlimited),
+                    ""
+                ),
                 style = MaterialTheme.typography.titleSmall
             )
 
-            LinearProgressIndicator(
-                progress = { 0.70f },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(0.dp, 8.dp)
-                    .height(16.dp)
-                    .border(
-                        border = BorderStroke(1.dp, Color.DarkGray)
-                    )
-            )
+            if (shoppingList.budget != null && shoppingList.budget != 0.0)
+                LinearProgressIndicator(
+                    progress = {
+                        (shoppingList.total / shoppingList.budget!!)
+                            .toFloat()
+                            .coerceIn(0f, 1f)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(0.dp, 8.dp)
+                        .height(16.dp)
+                        .border(
+                            border = BorderStroke(1.dp, Color.DarkGray)
+                        )
+                )
 
             OutlinedTextField(
                 value = listName,
@@ -105,7 +133,6 @@ fun ListSummaryScreen(
                 }
                 Button(
                     modifier = Modifier.weight(1f),
-                    //enabled = selectedValue.isNotEmpty(),
                     onClick = onFinishButtonClicked
                 ) {
                     Text(stringResource(R.string.finish))
@@ -119,6 +146,6 @@ fun ListSummaryScreen(
 @Composable
 fun ListSummaryScreenPreview() {
     ChaDalTheme {
-        ListSummaryScreen()
+        ListSummaryScreen(shoppingList = ShoppingListUiState())
     }
 }

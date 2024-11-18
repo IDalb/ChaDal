@@ -17,7 +17,12 @@
     <string name="total">Total : %1$s %2$s</string>
     <string name="budget">Budget : %1$s %2$s</string>
     <string name="unlimited">Illimité</string>
-    <string name="article">Article(s)</string>
+
+    <plurals name="article_number">
+        <item quantity="zero">Aucun article</item>
+        <item quantity="one">%d article</item>
+        <item quantity="other">%d articles</item>
+    </plurals>
 
     <string name="no_budget_dialog_title">Budget non défini</string>
     <string name="no_budget_dialog_message">Êtes-vous sûr de vouloir composer une liste sans budget ?</string>

@@ -51,6 +51,7 @@ fun ChadalApp(
                 var budget = 0.0
 
                 fun startShopping() {
+                    viewModel.resetShoppingList()
                     if (budget != 0.0) uiState.budget = budget
                     navController.navigate(ChadalScreens.ListComposition.name)
                 }
@@ -107,6 +108,7 @@ fun ChadalApp(
             }
             composable(route = ChadalScreens.ListSummary.name) {
                 ListSummaryScreen(
+                    shoppingList = viewModel.uiState.value,
                     onFinishButtonClicked = {
                         navController.popBackStack(ChadalScreens.Home.name, false)
                     },
