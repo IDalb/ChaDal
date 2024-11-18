@@ -22,4 +22,8 @@ class DataStoreManager(
         val shoppingListEntity = ShoppingListEntity(budget = budget, date = date, article = article)
         shoppingListDao.insertShoppingList(shoppingListEntity)
     }
+
+    fun clearAllShoppingLists() {
+        shoppingListDao.deleteAllShoppingLists()
+    }
 }

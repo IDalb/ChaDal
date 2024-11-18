@@ -38,7 +38,7 @@ fun CardList(
             )
 
             Text(
-                text = "Budget: ${course.budget}",
+                text = "Budget: ${course.budget} $",
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
                     .padding(bottom = 16.dp)

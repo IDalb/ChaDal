@@ -17,4 +17,8 @@ interface ShoppingListDao {
 
     @Query("SELECT * FROM shopping_list ORDER BY id DESC")
     fun getAllShoppingLists(): Flow<List<ShoppingListEntity>>
+
+
+    @Query("DELETE FROM shopping_list")
+    fun deleteAllShoppingLists()
 }

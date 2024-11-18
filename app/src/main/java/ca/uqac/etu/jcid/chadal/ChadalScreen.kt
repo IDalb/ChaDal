@@ -56,7 +56,9 @@ fun ChadalApp(
             }
             composable(route = ChadalScreens.OldList.name) {
                 OldListScreen(    navController = navController,
+                    dataStoreManager = dataStoreManager,
                     shoppingListDao = shoppingListDao)
+
             }
             composable(route = ChadalScreens.ListComposition.name) {
                 ListCompositionScreen(
