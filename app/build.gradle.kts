@@ -68,6 +68,7 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation(libs.androidx.room.common)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.engage.core)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

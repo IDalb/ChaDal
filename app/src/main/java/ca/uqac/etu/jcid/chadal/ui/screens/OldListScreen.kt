@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -17,25 +19,28 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import ca.uqac.etu.jcid.chadal.data.DataStoreManager
 import ca.uqac.etu.jcid.chadal.data.ShoppingListDao
 import ca.uqac.etu.jcid.chadal.ui.Component.CardList
-import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OldListScreen(
     navController: NavController,
-    shoppingListDao: ShoppingListDao, // Ajout du DAO en paramètre
+    dataStoreManager: DataStoreManager,
+    shoppingListDao: ShoppingListDao,
     modifier: Modifier = Modifier
 ) {
-
+    val coroutineScope = rememberCoroutineScope()
     val shoppingLists by shoppingListDao.getAllShoppingLists().collectAsState(initial = emptyList())
 
     Scaffold(
@@ -63,6 +68,27 @@ fun OldListScreen(
                 style = MaterialTheme.typography.headlineLarge,
                 modifier = Modifier.padding(bottom = 24.dp)
             )
+            Button(
+                onClick = {
+                    coroutineScope.launch {
+
+                        withContext(Dispatchers.IO) {
+                            dataStoreManager.clearAllShoppingLists()
+                        }
+
+
+                    }
+                },
+                modifier = Modifier
+                    .size(100.dp, 50.dp) // Fixed size for the square button
+            ) {
+                Text(
+                    text = "Clear",
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center
+                )
+            }
 
             LazyColumn(
                 modifier = Modifier.fillMaxWidth()
@@ -73,6 +99,8 @@ fun OldListScreen(
                         modifier = Modifier.padding(10.dp)
                     )
                 }
+
+
             }
         }
     }
