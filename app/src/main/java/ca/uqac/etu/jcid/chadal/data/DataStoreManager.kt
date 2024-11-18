@@ -1,6 +1,7 @@
 package ca.uqac.etu.jcid.chadal.data
 
 import android.content.Context
+import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 
@@ -11,14 +12,14 @@ class DataStoreManager(
 ) {
 
     companion object {
-        val BUDGET_KEY = intPreferencesKey("budget_key")
+        val BUDGET_KEY = doublePreferencesKey("budget_key")
         val DATE_KEY = stringPreferencesKey("date_key")
         val ARTICLE_KEY = stringPreferencesKey("article_key")
     }
 
 
 
-    fun saveShoppingListToDatabase(budget: Int, date: String, article: Int) {
+    fun saveShoppingListToDatabase(budget: Double, date: String, article: Int) {
         val shoppingListEntity = ShoppingListEntity(budget = budget, date = date, article = article)
         shoppingListDao.insertShoppingList(shoppingListEntity)
     }

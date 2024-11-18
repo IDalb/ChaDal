@@ -13,7 +13,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -23,10 +22,6 @@ import androidx.navigation.compose.rememberNavController
 import ca.uqac.etu.jcid.chadal.data.AppDatabase
 import ca.uqac.etu.jcid.chadal.data.DataStoreManager
 import ca.uqac.etu.jcid.chadal.ui.ShoppingListViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.dialog
 import ca.uqac.etu.jcid.chadal.ui.screens.AddItemScreen
 import ca.uqac.etu.jcid.chadal.ui.screens.HomeScreen
 import ca.uqac.etu.jcid.chadal.ui.screens.ListCompositionScreen
@@ -89,7 +84,7 @@ fun ChadalApp(
                 )
             }
             composable(route = ChadalScreens.OldList.name) {
-                OldListScreen(    navController = navController,
+                OldListScreen(navController = navController,
                     shoppingListDao = shoppingListDao)
             }
             composable(route = ChadalScreens.ListComposition.name) {
@@ -167,6 +162,41 @@ fun Dialog(
                 },
                 title = { Text(dialogTitle) },
                 text = { Text(dialogText) },
+                icon = { if (icon != null) Icon(icon, contentDescription = null) }
+            )
+        }
+    }
+}
+
+@Composable
+fun FieldDialog(
+    opened: Boolean? = null,
+    onDismissRequest: () -> Unit = {},
+    onConfirmation: () -> Unit = {},
+    dialogTitle: String = "",
+    dialogText: String = "",
+    icon: ImageVector? = null
+) {
+
+    var openDialog by remember { mutableStateOf(true) }
+    if (opened != null) openDialog = opened
+
+    when {
+        openDialog -> {
+            AlertDialog(
+                onDismissRequest = { openDialog = false; onDismissRequest() },
+                confirmButton = {
+                    TextButton(onClick = { openDialog = false; onConfirmation() }) {
+                        Text(stringResource(R.string.next))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { openDialog = false; onDismissRequest() }) {
+                        Text(stringResource(R.string.cancel))
+                    }
+                },
+                title = { Text(dialogTitle) },
+                text = { (dialogText) },
                 icon = { if (icon != null) Icon(icon, contentDescription = null) }
             )
         }

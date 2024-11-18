@@ -114,7 +114,7 @@ fun HomeScreen(
                                 budgetText = it
                             }
                         },
-                        label = { Text(stringResource(R.string.budget)) },
+                        label = { Text(stringResource(R.string.budget_label)) },
                         modifier = Modifier.fillMaxWidth(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
@@ -123,13 +123,15 @@ fun HomeScreen(
 
                     Button(
                         onClick = {
-                            val budget = budgetText.toIntOrNull() ?: 0
-                            val currentDate = date
                             val article_count = 0
                             coroutineScope.launch {
 
                                 withContext(Dispatchers.IO) {
-                                    dataStoreManager.saveShoppingListToDatabase(budget, currentDate, article_count)
+                                    dataStoreManager.saveShoppingListToDatabase(
+                                        budget,
+                                        date,
+                                        article_count
+                                    )
                                 }
 
                                 showText.value = true
@@ -182,7 +184,6 @@ fun HomeScreen(
 @Composable
 fun BottomNavigationBar(navController: NavController) {
     var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
-
     NavigationBar {
         NavigationBarItem(
             selected = selectedTabIndex == 0,

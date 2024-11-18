@@ -66,9 +66,9 @@ fun ListProductScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(11) {
+            /*items(11) {
                 ArticleCard(modifier = modifier)
-            }
+            }*/
         }
     }
 }

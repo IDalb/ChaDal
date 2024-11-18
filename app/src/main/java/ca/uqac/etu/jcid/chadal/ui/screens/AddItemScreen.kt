@@ -85,8 +85,10 @@ fun AddItemScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            val code: Int = 0
             Text(
-                text = stringResource(R.string.barcode_value, "000000000000"),
+                text = if(code == 0) stringResource(R.string.no_barcode)
+                    else stringResource(R.string.barcode_value, code),
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.Gray
             )

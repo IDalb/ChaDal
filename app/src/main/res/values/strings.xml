@@ -19,6 +19,7 @@
     <string name="total">Total : %1$s %2$s</string>
     <string name="budget">Budget : %1$s %2$s</string>
     <string name="unlimited">Illimité</string>
+    <string name="budget_label">Budget</string>
 
     <plurals name="article_number">
         <item quantity="zero">Aucun article</item>
@@ -37,7 +38,8 @@
     <string name="price">Prix</string>
 
     <string name="no_barcode">Pas de code-barres</string>
-    <string name="barcode_value">Code-barres : %s</string>
+    <string name="enter_code_manually">Entrer le code manuellement</string>
+    <string name="barcode_value">Code-barres : %i</string>
     <string name="add_image">Ajouter une image</string>
 
     <string name="placeholder_article_name">Nom de l\'article</string>

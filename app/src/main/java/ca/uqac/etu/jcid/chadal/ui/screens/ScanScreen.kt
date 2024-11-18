@@ -9,19 +9,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.google.mlkit.vision.barcode.BarcodeScannerOptions
-import com.google.mlkit.vision.barcode.common.Barcode
-import com.google.mlkit.vision.barcode.ZoomSuggestionOptions
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -123,11 +122,23 @@ fun ScanScreen(
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.fillMaxWidth().padding(32.dp)
                 )
-                OutlinedButton(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    onClick = onNoBarcodeButtonClicked
+                Column (modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text(stringResource(R.string.no_barcode))
+                    FilledTonalButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {}
+                    ) {
+                        Text(stringResource(R.string.enter_code_manually))
+                    }
+                    OutlinedButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = onNoBarcodeButtonClicked
+                    ) {
+                        Text(stringResource(R.string.no_barcode))
+                    }
                 }
             }
         }
