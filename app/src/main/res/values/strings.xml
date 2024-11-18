@@ -10,21 +10,40 @@
     <string name="title_list_new">Nouvelle liste de course</string>
     <string name="title_list_summary">Finalisation de la liste de courses</string>
     <string name="title_scan">Scan du code-barres</string>
-    <string name="title">Scan du code-barres</string>
 
-    <string name="add_article">Ajouter un article</string>
     <string name="start">Commencer</string>
+    <string name="add_article">Ajouter un article</string>
     <string name="finish">Terminer</string>
+    <string name="next">Continuer</string>
     <string name="cancel">Annuler</string>
-    <string name="total">Total</string>
-    <string name="budget">Budget</string>
-    <string name="article">Article(s)</string>
+    <string name="total">Total : %1$s %2$s</string>
+    <string name="budget">Budget : %1$s %2$s</string>
+    <string name="unlimited">Illimité</string>
+
+    <plurals name="article_number">
+        <item quantity="zero">Aucun article</item>
+        <item quantity="one">%d article</item>
+        <item quantity="other">%d articles</item>
+    </plurals>
+
+    <string name="no_budget_dialog_title">Budget non défini</string>
+    <string name="no_budget_dialog_message">Êtes-vous sûr de vouloir composer une liste sans budget ?</string>
+
+    <string name="optional_infos">Informations facultatives</string>
+
+    <string name="article_name">Nom de l\'article</string>
+    <string name="list_name">Nom de la liste</string>
+    <string name="category">Catégorie</string>
+    <string name="price">Prix</string>
 
     <string name="no_barcode">Pas de code-barres</string>
+    <string name="barcode_value">Code-barres : %s</string>
+    <string name="add_image">Ajouter une image</string>
 
     <string name="placeholder_article_name">Nom de l\'article</string>
     <string name="placeholder_category">Catégorie</string>
     <string name="placeholder_price">Prix</string>
 
-
+    <string name="placeholder_category_1">Catégorie 1</string>
+    <string name="placeholder_category_2">Catégorie 2</string>
 </resources>

@@ -58,7 +58,7 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    onStartShoppingButtonClicked: () -> Unit,
+    onStartShoppingButtonClicked: (Double) -> Unit,
     navController: NavController,
     dataStoreManager: DataStoreManager,
     shoppingListDao: ShoppingListDao,
@@ -69,7 +69,8 @@ fun HomeScreen(
     val coroutineScope = rememberCoroutineScope()
     val date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
     val showText = remember { mutableStateOf(false) }
-    val budgetText = remember { mutableStateOf("") }
+    var budgetText by remember { mutableStateOf("") }
+    val budget = budgetText.toDoubleOrNull() ?: 0.0
     val shoppingLists by shoppingListDao.getAllShoppingLists().collectAsState(initial = emptyList())
     Scaffold(
         topBar = {
@@ -100,7 +101,6 @@ fun HomeScreen(
                         .padding(16.dp)
                         .fillMaxWidth()
                 ) {
-
                     Text(
                         text = stringResource(R.string.title_list_new),
                         style = MaterialTheme.typography.headlineLarge,
@@ -108,10 +108,10 @@ fun HomeScreen(
                     )
 
                     TextField(
-                        value = budgetText.value,
+                        value = budgetText,
                         onValueChange = {
                             if (it.all { char -> char.isDigit() }) {
-                                budgetText.value = it
+                                budgetText = it
                             }
                         },
                         label = { Text(stringResource(R.string.budget)) },
@@ -123,7 +123,7 @@ fun HomeScreen(
 
                     Button(
                         onClick = {
-                            val budget = budgetText.value.toIntOrNull() ?: 0
+                            val budget = budgetText.toIntOrNull() ?: 0
                             val currentDate = date
                             val article_count = 0
                             coroutineScope.launch {
@@ -135,12 +135,11 @@ fun HomeScreen(
                                 showText.value = true
                             }
 
-                            onStartShoppingButtonClicked()
+                            onStartShoppingButtonClicked(budget)
                         },
                         modifier = Modifier.fillMaxWidth()
-                    )
-                    {
-                        Text(text = "Commencer")
+                    ) {
+                        Text(text = stringResource(R.string.start))
                     }
                 }
             }
@@ -179,8 +178,6 @@ fun HomeScreen(
         }
     }
 }
-
-
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {

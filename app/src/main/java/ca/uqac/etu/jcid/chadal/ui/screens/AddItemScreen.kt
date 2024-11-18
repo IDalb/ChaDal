@@ -1,5 +1,13 @@
 package ca.uqac.etu.jcid.chadal.ui.screens
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
+import android.net.Uri
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,40 +19,53 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.* // For paddings, spacings etc.
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.* // Compose material 3
 import androidx.compose.runtime.* // For state variables
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.compose.rememberNavController
+import androidx.compose.ui.text.input.ImeAction
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import ca.uqac.etu.jcid.chadal.R
+import ca.uqac.etu.jcid.chadal.data.Article
+import ca.uqac.etu.jcid.chadal.data.categories
 import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
+import coil3.compose.rememberAsyncImagePainter
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.Objects
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddItemScreen(
+    modifier: Modifier = Modifier,
     onCancelButtonClicked: () -> Unit = {},
-    onValidateButtonClicked: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onValidateButtonClicked: (Article) -> Unit = {}
 ) {
-    var price by remember { mutableStateOf("") }
+    var priceInput by remember { mutableStateOf("") }
+    val price = priceInput.toDoubleOrNull() ?: 0.0
+
     var name by remember { mutableStateOf("") }
-    var selectedCategory by remember { mutableStateOf("") }
-    var expanded by remember { mutableStateOf(false) } // Contrôle l'état d'expansion du menu déroulant
+
+    // Controls expansion state of the category dropdown menu
+    var expanded by remember { mutableStateOf(false) }
+    var selectedCategory by remember { mutableStateOf(categories[0]) }
+
+    val context = LocalContext.current
+    var uri by remember { mutableStateOf(Uri.EMPTY) }
+    var image = ContextCompat.getDrawable(context, R.drawable.ic_launcher_background)
 
     Scaffold (
         topBar = {
@@ -65,7 +86,7 @@ fun AddItemScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = "Code-barres : 000000000000",
+                text = stringResource(R.string.barcode_value, "000000000000"),
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.Gray
             )
@@ -73,42 +94,56 @@ fun AddItemScreen(
             HorizontalDivider()
 
             OutlinedTextField(
-                value = price,
+                label = { Text(stringResource(R.string.price)) },
+                placeholder = { Text("0") },
+                singleLine = true,
+                trailingIcon = { Text(stringResource(R.string.currency_cad)) },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next
+                ),
+                value = priceInput,
                 onValueChange = {
-                    if (it.all { char -> char.isDigit() }) { // Assure que seuls les chiffres sont acceptés
-                        price = it
-                    }
-                },
-                label = { Text("Prix") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    if (it.toDoubleOrNull() != null || it.isEmpty())
+                        priceInput = it
+                                },
+                isError = priceInput.isNotEmpty() && priceInput.toDoubleOrNull() == null,
                 modifier = Modifier.fillMaxWidth()
             )
-            Box(modifier = Modifier.fillMaxWidth()) {
-                TextButton(onClick = { expanded = true }) {
-                    Text(if (selectedCategory.isEmpty()) "Catégorie" else selectedCategory)
-                    Icon(
-                        painter = painterResource(id = android.R.drawable.arrow_down_float),
-                        contentDescription = null
-                    )
-                }
-                DropdownMenu(
+
+
+            // Category dropdown
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded }
+            ) {
+                OutlinedTextField(
+                    value = stringResource(selectedCategory.name),
+                    onValueChange = {},
+                    label = { Text(stringResource(R.string.placeholder_category)) },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)},
+                    readOnly = true,
+                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+                    modifier = Modifier.menuAnchor().fillMaxWidth()
+                )
+                ExposedDropdownMenu (
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
                 ) {
-                    val categories = listOf("Produits laitiers", "Viandes", "Fruits", "Légumes", "Boissons")
                     categories.forEach { category ->
-                        DropdownMenuItem(onClick = {
-                            selectedCategory = category
-                            expanded = false
-                        }) {
-                            Text(text = category)
-                        }
+                        DropdownMenuItem(
+                            text = { Text(stringResource(category.name)) },
+                            onClick = {
+                                selectedCategory = category
+                                expanded = false
+                            }
+                        )
                     }
                 }
             }
 
             Text(
-                text = "Informations facultatives",
+                text = stringResource(R.string.optional_infos),
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(top = 40.dp)
             )
@@ -116,23 +151,25 @@ fun AddItemScreen(
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = { Text("Nom") },
+                label = { Text(stringResource(R.string.article_name)) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
+                ),
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Box(
-                modifier = Modifier
-                    .size(120.dp)
-                    .padding(16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(id = android.R.drawable.ic_menu_camera),
-                    contentDescription = null,
-                    modifier = Modifier.size(60.dp),
-                    colorFilter = ColorFilter.tint(Color.Black)
-                )
+            // Photo widget (slightly different between the app and the preview)
+            if (!LocalInspectionMode.current) {
+                TakePhotoFromCamera() { uri = it }
+                if (uri != Uri.EMPTY) {
+                    val inputStream = LocalContext.current.contentResolver.openInputStream(uri)
+                    image = Drawable.createFromStream(inputStream, uri.toString())
+                }
             }
+            else
+                PhotoCapture(Uri.EMPTY)
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -145,7 +182,14 @@ fun AddItemScreen(
                     modifier = Modifier.weight(1f).padding(end = 8.dp)
                 ) { Text(stringResource(R.string.cancel)) }
                 Button(
-                    onClick = onValidateButtonClicked,
+                    onClick = { onValidateButtonClicked(
+                        Article(
+                            name,
+                            selectedCategory,
+                            price,
+                            image
+                        )
+                    ) },
                     modifier = Modifier.weight(1f).padding(start = 8.dp)
                 ) {
                     Text(stringResource(R.string.finish))
@@ -155,8 +199,95 @@ fun AddItemScreen(
     }
 }
 
-fun DropdownMenuItem(onClick: () -> Unit, interactionSource: @Composable () -> Unit) {
+fun CheckFieldsAndSubmit() {
 
+}
+
+@Composable
+fun PhotoCapture(capturedImageUri: Uri, captureFunction: ()->Unit = {}) {
+    val composable: @Composable ()->Unit
+
+    if (capturedImageUri.path?.isNotEmpty() == true) {
+        composable = {
+                Image(
+                painter = rememberAsyncImagePainter(capturedImageUri),
+                contentScale = ContentScale.Crop,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    } else {
+        composable = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.add_photo),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.size(40.dp)
+                )
+                Text(stringResource(R.string.add_image))
+            }
+        }
+    }
+
+    OutlinedButton(
+        onClick = captureFunction,
+        shape = RoundedCornerShape(8.dp),
+        contentPadding = PaddingValues(0.dp),
+        modifier = Modifier
+            .height(200.dp)
+            .aspectRatio(1f, true)
+    ) { composable.invoke() }
+}
+
+@Composable
+fun TakePhotoFromCamera(setMethod: (Uri)->Unit) {
+    val context = LocalContext.current
+    val file = context.createImageFile()
+    val uri = FileProvider.getUriForFile(
+        Objects.requireNonNull(context),
+        context.packageName + ".provider", file
+    )
+
+    var capturedImageUri by remember { mutableStateOf(Uri.EMPTY) }
+    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
+        capturedImageUri = uri
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) {
+        if (it) {
+            Toast.makeText(context, "Permission granted!", Toast.LENGTH_SHORT).show()
+            cameraLauncher.launch(uri)
+        } else {
+            Toast.makeText(context, "Permission denied...", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    setMethod(capturedImageUri)
+
+    PhotoCapture(capturedImageUri) {
+        val permissionCheckResult =
+            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+
+        if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
+            cameraLauncher.launch(uri)
+        } else {
+            permissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
+}
+
+fun Context.createImageFile(): File {
+    val timeStamp = SimpleDateFormat("yyyy_MM_dd_HH-mm_ss", Locale.US).format(Date())
+    val imageFileName = "ARTICLE_IMG_$timeStamp"
+    val image = File.createTempFile(imageFileName, ".jpg", externalCacheDir)
+
+    return image
 }
 
 @Preview

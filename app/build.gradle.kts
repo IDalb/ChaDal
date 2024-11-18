@@ -1,6 +1,4 @@
-
 plugins {
-
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("kotlin-android")
@@ -81,13 +79,15 @@ dependencies {
 
     implementation("com.google.mlkit:barcode-scanning:17.3.0")
 
-    implementation("androidx.camera:camera-camera2:1.3.4")
-    implementation("androidx.camera:camera-lifecycle:1.3.4")
-    implementation("androidx.camera:camera-view:1.3.4")
-    implementation("androidx.camera:camera-extensions:1.3.4")
+    implementation("androidx.camera:camera-camera2:1.4.0")
+    implementation("androidx.camera:camera-lifecycle:1.4.0")
+    implementation("androidx.camera:camera-view:1.4.0")
+    implementation("androidx.camera:camera-extensions:1.4.0")
+
     implementation ("androidx.room:room-runtime:2.5.0")
     implementation ("androidx.room:room-ktx:2.5.0")
     kapt ("androidx.room:room-compiler:2.5.0")
 
-
+    implementation("io.coil-kt.coil3:coil-compose:3.0.0-rc02")
+    implementation("com.google.accompanist:accompanist-drawablepainter:0.36.0")
 }
