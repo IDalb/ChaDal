@@ -38,6 +38,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import ca.uqac.etu.jcid.chadal.R
 import ca.uqac.etu.jcid.chadal.data.Article
+import ca.uqac.etu.jcid.chadal.data.ShoppingListUiState
 import ca.uqac.etu.jcid.chadal.data.categories
 import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
 import coil3.compose.rememberAsyncImagePainter
@@ -51,6 +52,7 @@ import java.util.Objects
 @Composable
 fun AddItemScreen(
     modifier: Modifier = Modifier,
+    listUiState: ShoppingListUiState,
     onCancelButtonClicked: () -> Unit = {},
     onValidateButtonClicked: (Article) -> Unit = {}
 ) {
@@ -85,10 +87,12 @@ fun AddItemScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            val code: Int = 0
             Text(
-                text = if(code == 0) stringResource(R.string.no_barcode)
-                    else stringResource(R.string.barcode_value, code),
+                text = if(listUiState.lastScanValue.displayValue == "") stringResource(R.string.no_barcode)
+                    else stringResource(
+                        R.string.barcode_value,
+                        listUiState.lastScanValue.displayValue
+                    ),
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.Gray
             )
@@ -296,6 +300,6 @@ fun Context.createImageFile(): File {
 @Composable
 fun AddItemScreenPreview() {
     ChaDalTheme {
-        AddItemScreen()
+        AddItemScreen(listUiState = ShoppingListUiState())
     }
 }

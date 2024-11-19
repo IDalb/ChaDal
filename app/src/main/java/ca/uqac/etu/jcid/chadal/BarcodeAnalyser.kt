@@ -1,10 +1,13 @@
 package ca.uqac.etu.jcid.chadal
 
+import android.annotation.SuppressLint
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import android.graphics.ImageFormat
+import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.camera.core.ExperimentalGetImage
+import ca.uqac.etu.jcid.chadal.data.BarcodeValue
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
@@ -12,8 +15,9 @@ import com.google.mlkit.vision.common.InputImage
 import java.nio.ByteBuffer
 
 class BarcodeAnalyser(
-    private val onBarcodeScanned: (String) -> Unit
+    private val onBarcodeScanned: (BarcodeValue) -> Unit
 ): ImageAnalysis.Analyzer {
+    private var firstCall = true
 
     val scanOptions = BarcodeScannerOptions.Builder()
         .setBarcodeFormats(
@@ -42,20 +46,19 @@ class BarcodeAnalyser(
         val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
 
         val scanner = BarcodeScanning.getClient(scanOptions)
-        val result = scanner.process(image)
+        scanner.process(image)
             .addOnSuccessListener { barcodes ->
-                for (barcode in barcodes) {
-                    val bounds = barcode.boundingBox
-                    val corners = barcode.cornerPoints
-
-                    val rawValue = barcode.rawValue
-                    val valueType = barcode.valueType
-
-                    if (valueType != Barcode.TYPE_TEXT && valueType != Barcode.TYPE_PRODUCT) continue
-                    val value = barcode.displayValue
+                if (barcodes.isNotEmpty() && firstCall) {
+                    val barcode = barcodes.firstOrNull() ?: return@addOnSuccessListener
+                    if (barcode.valueType != Barcode.TYPE_TEXT && barcode.valueType != Barcode.TYPE_PRODUCT) return@addOnSuccessListener
+                    barcode.rawValue?.let { codeValue ->
+                        firstCall = false
+                        onBarcodeScanned(BarcodeValue(codeValue, barcode.displayValue?: codeValue))
+                        imageProxy.close()
+                    }
                 }
             }
-            .addOnFailureListener {
-            }
+            .addOnFailureListener { }
+            .addOnCompleteListener { imageProxy.close() }
     }
 }

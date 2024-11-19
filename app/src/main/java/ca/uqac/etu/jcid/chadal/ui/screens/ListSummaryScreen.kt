@@ -43,7 +43,7 @@ import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
 @Composable
 fun ListSummaryScreen(
     modifier: Modifier = Modifier,
-    shoppingList: ShoppingListUiState,
+    listUiState: ShoppingListUiState,
     onCancelButtonClicked: () -> Unit = {},
     onFinishButtonClicked: () -> Unit = {}
 ) {
@@ -68,8 +68,8 @@ fun ListSummaryScreen(
             Text(
                 text = LocalContext.current.resources.getQuantityString(
                     R.plurals.article_number,
-                    shoppingList.articles.size,
-                    shoppingList.articles.size
+                    listUiState.articles.size,
+                    listUiState.articles.size
                     ),
                 style = MaterialTheme.typography.bodyLarge,
             )
@@ -78,15 +78,15 @@ fun ListSummaryScreen(
 
             Text(
                 text = stringResource(R.string.total,
-                    String.format("%.2f", shoppingList.total),
+                    String.format("%.2f", listUiState.total),
                     stringResource(R.string.currency_cad)
                 ),
                 style = MaterialTheme.typography.titleLarge
             )
             Text(
-                text = if (shoppingList.budget != null) stringResource(
+                text = if (listUiState.budget != null) stringResource(
                     R.string.budget,
-                    String.format("%.2f", shoppingList.budget),
+                    String.format("%.2f", listUiState.budget),
                     stringResource(R.string.currency_cad)
                 )
                 else stringResource(
@@ -97,10 +97,10 @@ fun ListSummaryScreen(
                 style = MaterialTheme.typography.titleSmall
             )
 
-            if (shoppingList.budget != null && shoppingList.budget != 0.0)
+            if (listUiState.budget != null && listUiState.budget != 0.0)
                 LinearProgressIndicator(
                     progress = {
-                        (shoppingList.total / shoppingList.budget!!)
+                        (listUiState.total / listUiState.budget!!)
                             .toFloat()
                             .coerceIn(0f, 1f)
                     },
@@ -146,6 +146,6 @@ fun ListSummaryScreen(
 @Composable
 fun ListSummaryScreenPreview() {
     ChaDalTheme {
-        ListSummaryScreen(shoppingList = ShoppingListUiState())
+        ListSummaryScreen(listUiState = ShoppingListUiState())
     }
 }

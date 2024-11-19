@@ -39,7 +39,7 @@
 
     <string name="no_barcode">Pas de code-barres</string>
     <string name="enter_code_manually">Entrer le code manuellement</string>
-    <string name="barcode_value">Code-barres : %i</string>
+    <string name="barcode_value">Code-barres : %s</string>
     <string name="add_image">Ajouter une image</string>
 
     <string name="placeholder_article_name">Nom de l\'article</string>

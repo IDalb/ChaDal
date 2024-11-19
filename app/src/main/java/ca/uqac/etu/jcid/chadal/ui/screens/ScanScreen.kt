@@ -40,12 +40,15 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import ca.uqac.etu.jcid.chadal.BarcodeAnalyser
 import ca.uqac.etu.jcid.chadal.R
+import ca.uqac.etu.jcid.chadal.data.BarcodeValue
 import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
+import java.util.concurrent.Executors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScanScreen(
     modifier: Modifier = Modifier,
+    onBarcodeScanned: (BarcodeValue) -> Unit = {},
     onCancelButtonClicked: () -> Unit = {},
     onNoBarcodeButtonClicked: () -> Unit = {}
 ) {
@@ -101,7 +104,7 @@ fun ScanScreen(
                             .build()
                         imageAnalysis.setAnalyzer(
                             ContextCompat.getMainExecutor(context),
-                            BarcodeAnalyser { result -> code = result }
+                            BarcodeAnalyser { barcode -> onBarcodeScanned(barcode) }
                         )
                         try {
                             cameraProviderFuture.get().bindToLifecycle(

@@ -1,5 +1,6 @@
 package ca.uqac.etu.jcid.chadal
 
+import android.widget.Toast
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -20,6 +21,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ca.uqac.etu.jcid.chadal.data.AppDatabase
+import ca.uqac.etu.jcid.chadal.data.BarcodeValue
 import ca.uqac.etu.jcid.chadal.data.DataStoreManager
 import ca.uqac.etu.jcid.chadal.ui.ShoppingListViewModel
 import ca.uqac.etu.jcid.chadal.ui.screens.AddItemScreen
@@ -100,16 +102,22 @@ fun ChadalApp(
             }
             composable(route = ChadalScreens.Scan.name) {
                 ScanScreen(
+                    onBarcodeScanned = { barcodeValue ->
+                        viewModel.uiState.value.lastScanValue = barcodeValue
+                        navController.navigate(ChadalScreens.AddItem.name)
+                    },
                     onNoBarcodeButtonClicked = {
+                        viewModel.uiState.value.lastScanValue = BarcodeValue("", "")
                         navController.navigate(ChadalScreens.AddItem.name)
                     },
                     onCancelButtonClicked = {
                         navController.popBackStack(ChadalScreens.ListComposition.name, false)
-                    }
+                    },
                 )
             }
             composable(route = ChadalScreens.AddItem.name) {
                 AddItemScreen(
+                    listUiState = uiState,
                     onValidateButtonClicked = { article ->
                         viewModel.addArticle(article)
                         navController.popBackStack(ChadalScreens.ListComposition.name, false)
@@ -121,7 +129,7 @@ fun ChadalApp(
             }
             composable(route = ChadalScreens.ListSummary.name) {
                 ListSummaryScreen(
-                    shoppingList = viewModel.uiState.value,
+                    listUiState = uiState,
                     onFinishButtonClicked = {
                         navController.popBackStack(ChadalScreens.Home.name, false)
                     },
