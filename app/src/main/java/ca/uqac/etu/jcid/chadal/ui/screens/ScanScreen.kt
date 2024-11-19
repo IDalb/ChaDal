@@ -49,6 +49,7 @@ import java.util.concurrent.Executors
 fun ScanScreen(
     modifier: Modifier = Modifier,
     onBarcodeScanned: (BarcodeValue) -> Unit = {},
+    onManualEntryButtonClicked: () -> Unit = {},
     onCancelButtonClicked: () -> Unit = {},
     onNoBarcodeButtonClicked: () -> Unit = {}
 ) {
@@ -132,7 +133,7 @@ fun ScanScreen(
                 ) {
                     FilledTonalButton(
                         modifier = Modifier.fillMaxWidth(),
-                        onClick = {}
+                        onClick = onManualEntryButtonClicked
                     ) {
                         Text(stringResource(R.string.enter_code_manually))
                     }

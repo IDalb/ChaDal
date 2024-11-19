@@ -1,11 +1,14 @@
 package ca.uqac.etu.jcid.chadal
 
 import android.widget.Toast
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -15,6 +18,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -101,6 +106,18 @@ fun ChadalApp(
                 )
             }
             composable(route = ChadalScreens.Scan.name) {
+                var manualEntryOpenDialog by remember { mutableStateOf(false) }
+                FieldDialog(
+                    opened = manualEntryOpenDialog,
+                    onDismissRequest = { manualEntryOpenDialog = false },
+                    onConfirmation = { value ->
+                        manualEntryOpenDialog = false
+                        viewModel.uiState.value.lastScanValue = BarcodeValue(value, value)
+                        navController.navigate(ChadalScreens.AddItem.name)
+                    },
+                    dialogTitle = stringResource(R.string.enter_code_manually),
+                )
+
                 ScanScreen(
                     onBarcodeScanned = { barcodeValue ->
                         viewModel.uiState.value.lastScanValue = barcodeValue
@@ -110,6 +127,7 @@ fun ChadalApp(
                         viewModel.uiState.value.lastScanValue = BarcodeValue("", "")
                         navController.navigate(ChadalScreens.AddItem.name)
                     },
+                    onManualEntryButtonClicked = { manualEntryOpenDialog = true },
                     onCancelButtonClicked = {
                         navController.popBackStack(ChadalScreens.ListComposition.name, false)
                     },
@@ -181,21 +199,22 @@ fun Dialog(
 fun FieldDialog(
     opened: Boolean? = null,
     onDismissRequest: () -> Unit = {},
-    onConfirmation: () -> Unit = {},
+    onConfirmation: (String) -> Unit = {},
     dialogTitle: String = "",
-    dialogText: String = "",
     icon: ImageVector? = null
 ) {
 
     var openDialog by remember { mutableStateOf(true) }
     if (opened != null) openDialog = opened
 
+    var valueInput by remember { mutableStateOf("") }
+
     when {
         openDialog -> {
             AlertDialog(
                 onDismissRequest = { openDialog = false; onDismissRequest() },
                 confirmButton = {
-                    TextButton(onClick = { openDialog = false; onConfirmation() }) {
+                    TextButton(onClick = { openDialog = false; onConfirmation(valueInput) }) {
                         Text(stringResource(R.string.next))
                     }
                 },
@@ -205,7 +224,17 @@ fun FieldDialog(
                     }
                 },
                 title = { Text(dialogTitle) },
-                text = { (dialogText) },
+                text = {
+                    OutlinedTextField(
+                        value = valueInput,
+                        onValueChange = { valueInput = it },
+                        label = { Text(stringResource(R.string.barcode)) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done
+                        )
+                    ) },
                 icon = { if (icon != null) Icon(icon, contentDescription = null) }
             )
         }
