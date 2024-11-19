@@ -7,7 +7,7 @@ data class BarcodeValue(
 
 data class ShoppingListUiState (
     val articles: List<Article> = listOf(),
-    var total: Double = 0.0,
+    var total: Double = calculateTotal(articles),
     var budget: Double? = null,
 
     var name:String = "",
@@ -15,3 +15,13 @@ data class ShoppingListUiState (
     // Temporary scan data
     var lastScanValue: BarcodeValue = BarcodeValue("", "")
 )
+
+fun calculateTotal(articles: List<Article>): Double {
+    var total:Double = 0.0
+    articles.forEach {
+        // Tax calculation & application
+        val price = it.price * (1 + it.category.taxPercentage)
+        total += price
+    }
+    return total
+}

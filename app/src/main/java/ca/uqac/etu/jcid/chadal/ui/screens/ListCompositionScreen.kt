@@ -162,8 +162,12 @@ fun ListCompositionScreen(
 }
 
 fun updateTotal(listUiState: ShoppingListUiState) {
-    var total = 0.0
-    for (article: Article in listUiState.articles) total += article.price
+    var total:Double = 0.0
+    listUiState.articles.forEach {
+        // Tax calculation & application
+        val price = it.price * (1 + it.category.taxPercentage)
+        total += price
+    }
     listUiState.total = total
 }
 
@@ -205,7 +209,9 @@ fun ArticleCard(
                         style = MaterialTheme.typography.labelMedium
                     )
                     Text(
-                        text = "%.2f CAD".format(article.price),
+                        text = "%.2f CAD".format(
+                            article.price * (1 + article.category.taxPercentage)
+                        ),
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.padding(0.dp, 4.dp, 0.dp, 0.dp)
                     )

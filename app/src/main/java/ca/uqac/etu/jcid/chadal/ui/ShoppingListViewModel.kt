@@ -27,7 +27,6 @@ class ShoppingListViewModel : ViewModel() {
         _uiState.update { currentState ->
             currentState.copy(
                 articles = currentState.articles + article,
-                total = calculateTotal()
             )
         }
     }
@@ -36,17 +35,7 @@ class ShoppingListViewModel : ViewModel() {
         _uiState.update { currentState ->
             currentState.copy(
                 articles = currentState.articles - article,
-                total = calculateTotal()
             )
         }
-    }
-
-    private fun calculateTotal(): Double {
-        var total:Double = 0.0
-        _uiState.value.articles.forEach {
-            // Tax calculation & application
-            total += it.price * (1 + it.category.taxPercentage)
-        }
-        return total
     }
 }
