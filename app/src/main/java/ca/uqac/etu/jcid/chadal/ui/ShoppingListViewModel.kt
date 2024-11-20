@@ -38,4 +38,8 @@ class ShoppingListViewModel : ViewModel() {
             )
         }
     }
+    fun setBudget(budget: Double) {
+        _uiState.value = _uiState.value.copy(budget = budget)
+    }
+
 }

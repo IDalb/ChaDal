@@ -64,10 +64,12 @@ fun ChadalApp(
                 var budget = 0.0
 
                 fun startShopping() {
+                    val budgetRemember = budget
                     viewModel.resetShoppingList()
-                    if (budget != 0.0) uiState.budget = budget
+                    viewModel.setBudget(budgetRemember) // Mettre à jour le budget via ViewModel
                     navController.navigate(ChadalScreens.ListComposition.name)
                 }
+
 
                 Dialog(
                     opened = noBudgetOpenDialog,
@@ -96,6 +98,7 @@ fun ChadalApp(
                     shoppingListDao = shoppingListDao)
             }
             composable(route = ChadalScreens.ListComposition.name) {
+                println("compositionroute" + uiState.budget)
                 ListCompositionScreen(
                     listUiState = uiState,
                     onAddItemButtonClicked = { navController.navigate(ChadalScreens.Scan.name) },
@@ -105,6 +108,7 @@ fun ChadalApp(
                     }
                 )
             }
+
             composable(route = ChadalScreens.Scan.name) {
                 var manualEntryOpenDialog by remember { mutableStateOf(false) }
                 FieldDialog(

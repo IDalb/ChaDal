@@ -65,9 +65,6 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
 
-
-    val coroutineScope = rememberCoroutineScope()
-    val date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
     val showText = remember { mutableStateOf(false) }
     var budgetText by remember { mutableStateOf("") }
     val budget = budgetText.toDoubleOrNull() ?: 0.0
@@ -123,21 +120,10 @@ fun HomeScreen(
 
                     Button(
                         onClick = {
-                            val article_count = 0
-                            coroutineScope.launch {
-
-                                withContext(Dispatchers.IO) {
-                                    dataStoreManager.saveShoppingListToDatabase(
-                                        budget,
-                                        date,
-                                        article_count
-                                    )
-                                }
 
                                 showText.value = true
-                            }
-
                             onStartShoppingButtonClicked(budget)
+
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
