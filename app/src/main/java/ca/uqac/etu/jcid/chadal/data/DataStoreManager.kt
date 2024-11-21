@@ -15,12 +15,13 @@ class DataStoreManager(
         val BUDGET_KEY = doublePreferencesKey("budget_key")
         val DATE_KEY = stringPreferencesKey("date_key")
         val ARTICLE_KEY = stringPreferencesKey("article_key")
+        val TOTAL_KEY = stringPreferencesKey("total_key")
     }
 
 
 
-    fun saveShoppingListToDatabase(budget: Double, date: String, article: Int) {
-        val shoppingListEntity = ShoppingListEntity(budget = budget, date = date, article = article)
+    fun saveShoppingListToDatabase(budget: Double, date: String, article: Int, total: Double) {
+        val shoppingListEntity = ShoppingListEntity(budget = budget, date = date, article = article, total = total)
         shoppingListDao.insertShoppingList(shoppingListEntity)
     }
 

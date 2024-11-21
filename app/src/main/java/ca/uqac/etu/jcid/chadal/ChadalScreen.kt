@@ -153,6 +153,7 @@ fun ChadalApp(
                 ListSummaryScreen(
                     listUiState = uiState,
                     onFinishButtonClicked = {
+
                         navController.popBackStack(ChadalScreens.Home.name, false)
                     },
                     onCancelButtonClicked = {

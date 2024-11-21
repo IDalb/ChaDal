@@ -8,6 +8,7 @@ data class ShoppingListEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val budget: Double,
     val date: String,
-    val article: Int
+    val article: Int,
+    val total: Double
 
 )
