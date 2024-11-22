@@ -35,6 +35,13 @@ import ca.uqac.etu.jcid.chadal.ui.screens.ListCompositionScreen
 import ca.uqac.etu.jcid.chadal.ui.screens.ListSummaryScreen
 import ca.uqac.etu.jcid.chadal.ui.screens.OldListScreen
 import ca.uqac.etu.jcid.chadal.ui.screens.ScanScreen
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import androidx.compose.runtime.rememberCoroutineScope
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 enum class ChadalScreens {
     Home,
@@ -44,7 +51,6 @@ enum class ChadalScreens {
     ListSummary,
     OldList,
 }
-
 @Composable
 fun ChadalApp(
     viewModel: ShoppingListViewModel = viewModel(),
@@ -54,7 +60,10 @@ fun ChadalApp(
     val context = LocalContext.current
     val shoppingListDao = remember { AppDatabase.getDatabase(context).shoppingListDao() }
     val dataStoreManager = remember { DataStoreManager(context, shoppingListDao) }
-    Scaffold () { it
+    val coroutineScope = rememberCoroutineScope()
+    val date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
+
+    Scaffold() { it
         NavHost(
             navController = navController,
             startDestination = ChadalScreens.Home.name
@@ -64,12 +73,13 @@ fun ChadalApp(
                 var budget = 0.0
 
                 fun startShopping() {
-                    val budgetRemember = budget
+                    val budgetRemember = if (budget == 0.0) null else budget
                     viewModel.resetShoppingList()
-                    viewModel.setBudget(budgetRemember) // Mettre à jour le budget via ViewModel
+                    if (budgetRemember != null) {
+                        viewModel.setBudget(budgetRemember)
+                    }
                     navController.navigate(ChadalScreens.ListComposition.name)
                 }
-
 
                 Dialog(
                     opened = noBudgetOpenDialog,
@@ -92,13 +102,42 @@ fun ChadalApp(
                     shoppingListDao = shoppingListDao,
                 )
             }
+
+            composable(route = ChadalScreens.ListSummary.name) {
+                ListSummaryScreen(
+                    listUiState = uiState,
+                    onFinishButtonClicked = {
+                        coroutineScope.launch {
+                            // Sauvegarde des données dans la base de données
+                            withContext(Dispatchers.IO) {
+                                uiState.budget?.let { it1 ->
+                                    dataStoreManager.saveShoppingListToDatabase(
+                                        budget = it1,
+                                        date = date,
+                                        article = uiState.articles.size,
+                                        total = uiState.total
+                                    )
+                                }
+                            }
+                            // Retour à l'écran d'accueil
+                            navController.popBackStack(ChadalScreens.Home.name, false)
+                        }
+                    },
+                    onCancelButtonClicked = {
+                        navController.popBackStack(ChadalScreens.ListComposition.name, false)
+                    }
+                )
+            }
+
+            // Autres écrans restent inchangés
             composable(route = ChadalScreens.OldList.name) {
-                OldListScreen(navController = navController,
+                OldListScreen(
+                    navController = navController,
                     dataStoreManager = dataStoreManager,
-                    shoppingListDao = shoppingListDao)
+                    shoppingListDao = shoppingListDao
+                )
             }
             composable(route = ChadalScreens.ListComposition.name) {
-                println("compositionroute" + uiState.budget)
                 ListCompositionScreen(
                     listUiState = uiState,
                     onAddItemButtonClicked = { navController.navigate(ChadalScreens.Scan.name) },
@@ -108,20 +147,7 @@ fun ChadalApp(
                     }
                 )
             }
-
             composable(route = ChadalScreens.Scan.name) {
-                var manualEntryOpenDialog by remember { mutableStateOf(false) }
-                FieldDialog(
-                    opened = manualEntryOpenDialog,
-                    onDismissRequest = { manualEntryOpenDialog = false },
-                    onConfirmation = { value ->
-                        manualEntryOpenDialog = false
-                        viewModel.uiState.value.lastScanValue = BarcodeValue(value, value)
-                        navController.navigate(ChadalScreens.AddItem.name)
-                    },
-                    dialogTitle = stringResource(R.string.enter_code_manually),
-                )
-
                 ScanScreen(
                     onBarcodeScanned = { barcodeValue ->
                         viewModel.uiState.value.lastScanValue = barcodeValue
@@ -131,7 +157,6 @@ fun ChadalApp(
                         viewModel.uiState.value.lastScanValue = BarcodeValue("", "")
                         navController.navigate(ChadalScreens.AddItem.name)
                     },
-                    onManualEntryButtonClicked = { manualEntryOpenDialog = true },
                     onCancelButtonClicked = {
                         navController.popBackStack(ChadalScreens.ListComposition.name, false)
                     },
@@ -146,18 +171,6 @@ fun ChadalApp(
                     },
                     onCancelButtonClicked = {
                         navController.popBackStack(ChadalScreens.Scan.name, false)
-                    }
-                )
-            }
-            composable(route = ChadalScreens.ListSummary.name) {
-                ListSummaryScreen(
-                    listUiState = uiState,
-                    onFinishButtonClicked = {
-
-                        navController.popBackStack(ChadalScreens.Home.name, false)
-                    },
-                    onCancelButtonClicked = {
-                        navController.popBackStack(ChadalScreens.ListComposition.name, false)
                     }
                 )
             }
