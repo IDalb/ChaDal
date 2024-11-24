@@ -56,6 +56,8 @@
     <string name="category_produce">Lait, crème, fromage, gros pot de glace...</string>
     <string name="category_baby">Produits alimentaires pour bébés</string>
     <string name="category_drinks_no_tax">Eau non gazéifiée, jus de fruits / légumes</string>
+    <string name="tax_percentage"> % Taxe</string>
+    <string name="delete_article"> supprimer article</string>
 
     <string name="category_meals">Aliments chauffés ou préparés</string>
     <string name="category_candy">Friandises, grignotines</string>

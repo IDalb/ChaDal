@@ -56,11 +56,14 @@ import ca.uqac.etu.jcid.chadal.R
 import ca.uqac.etu.jcid.chadal.data.Article
 import ca.uqac.etu.jcid.chadal.data.ArticleCategory
 import ca.uqac.etu.jcid.chadal.data.ShoppingListUiState
+import ca.uqac.etu.jcid.chadal.data.categories
 import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
+import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 
+
 @SuppressLint("DefaultLocale")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ListCompositionScreen(
     modifier: Modifier = Modifier,
@@ -82,7 +85,7 @@ fun ListCompositionScreen(
             )
         },
         floatingActionButton = {
-            ExtendedFloatingActionButton (
+            ExtendedFloatingActionButton(
                 onClick = { onAddItemButtonClicked() },
                 icon = { Icon(Icons.Filled.Add, null) },
                 text = { Text(stringResource(R.string.add_article)) }
@@ -98,10 +101,15 @@ fun ListCompositionScreen(
                                     .toFloat()
                                     .coerceIn(0f, 1f)
                             },
-                            modifier = Modifier.fillMaxWidth().padding(4.dp).height(8.dp)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(4.dp)
+                                .height(8.dp)
                         )
-                    Row (
-                        modifier = Modifier.fillMaxWidth().padding(16.dp, 8.dp)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp, 8.dp)
                     ) {
                         OutlinedButton(
                             onClick = onFinishShoppingButtonClicked
@@ -109,16 +117,17 @@ fun ListCompositionScreen(
                             Icon(
                                 Icons.Filled.Done,
                                 null,
-                                modifier = Modifier.padding(0.dp, 0.dp, 8.dp, 0.dp)
+                                modifier = Modifier.padding(end = 8.dp)
                             )
                             Text(stringResource(R.string.finish))
                         }
-                        Column (
+                        Column(
                             modifier = Modifier.weight(1f),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = stringResource(R.string.total,
+                                text = stringResource(
+                                    R.string.total,
                                     String.format("%.2f", listUiState.total),
                                     stringResource(R.string.currency_cad)
                                 ),
@@ -126,11 +135,10 @@ fun ListCompositionScreen(
                             )
                             Text(
                                 text = if (listUiState.budget != null) stringResource(
-                                        R.string.budget,
-                                        String.format("%.2f", listUiState.budget),
-                                        stringResource(R.string.currency_cad)
-                                    )
-                                    else stringResource(
+                                    R.string.budget,
+                                    String.format("%.2f", listUiState.budget),
+                                    stringResource(R.string.currency_cad)
+                                ) else stringResource(
                                     R.string.budget,
                                     stringResource(R.string.unlimited),
                                     ""
@@ -143,8 +151,10 @@ fun ListCompositionScreen(
             }
         }
     ) { innerPadding ->
-        LazyVerticalGrid (
-            modifier = modifier.padding(innerPadding).clipToBounds(),
+        LazyVerticalGrid(
+            modifier = modifier
+                .padding(innerPadding)
+                .clipToBounds(),
             columns = GridCells.Fixed(2),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -153,20 +163,17 @@ fun ListCompositionScreen(
             items(listUiState.articles) {
                 ArticleCard(
                     article = it,
-                    modifier = modifier.animateItem(),
+                    modifier = modifier.animateItemPlacement(),
                     onRemoveItemButtonClicked = onRemoveItemButtonClicked
                 )
             }
         }
     }
 }
-
 fun updateTotal(listUiState: ShoppingListUiState) {
-    var total:Double = 0.0
-    listUiState.articles.forEach {
-        // Tax calculation & application
-        val price = it.price * (1 + it.category.taxPercentage)
-        total += price
+    val total = listUiState.articles.sumOf {
+        val price = it.price * (1 + it.taxPercentage)
+        price
     }
     listUiState.total = total
 }
@@ -192,41 +199,59 @@ fun ArticleCard(
                 }
             )
         ) {
-            Column(modifier = modifier) {
-                Image(
-                    rememberDrawablePainter(article.imageResource),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxWidth().aspectRatio(7f / 4f)
-                )
-                Column(modifier = modifier.padding(8.dp)) {
-                    Text(
-                        text = article.name,
-                        style = MaterialTheme.typography.titleMedium
+            Column(modifier = Modifier.padding(8.dp)) {
+                // Affichage de l'image
+                if (article.imageResource.isNullOrEmpty()) {
+                    // Image par défaut si aucune ressource n'est disponible
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_launcher_background),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(7f / 4f)
                     )
-                    Text(
-                        text = stringResource(article.category.name),
-                        style = MaterialTheme.typography.labelMedium
-                    )
-                    Text(
-                        text = "%.2f CAD".format(
-                            article.price * (1 + article.category.taxPercentage)
-                        ),
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(0.dp, 4.dp, 0.dp, 0.dp)
+                } else {
+                    Image(
+                        painter = rememberAsyncImagePainter(model = article.imageResource),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(7f / 4f)
                     )
                 }
+
+                // Nom de l'article
+                Text(
+                    text = article.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+                // Nom de la catégorie
+                Text(
+                    text = article.categoryName.toString(),
+                    style = MaterialTheme.typography.labelMedium,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+                Text(
+                    text = "%.2f CAD".format(
+                        article.price * (1 + article.taxPercentage / 100) // Correction : taxPercentage est en %
+                    ),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
             }
         }
 
-        // Context menu
+        // Menu contextuel
         DropdownMenu(
             expanded = contextualMenuExpanded,
             onDismissRequest = { contextualMenuExpanded = false }
         ) {
             DropdownMenuItem(
                 leadingIcon = { Icon(painterResource(R.drawable.delete), null) },
-                text = { Text("Delete article") },
+                text = { Text(stringResource(R.string.delete_article)) },
                 onClick = {
                     contextualMenuExpanded = false
                     onRemoveItemButtonClicked(article)
@@ -236,6 +261,9 @@ fun ArticleCard(
     }
 }
 
+
+
+/*
 @Preview
 @Composable
 fun ListCompositionScreenPreview() {
@@ -257,3 +285,4 @@ fun ListCompositionScreenPreview() {
         )
     }
 }
+*/

@@ -61,15 +61,18 @@ fun AddItemScreen(
 
     var name by remember { mutableStateOf("") }
 
-    // Controls expansion state of the category dropdown menu
+    // Dropdown pour la catégorie
     var expanded by remember { mutableStateOf(false) }
     var selectedCategory by remember { mutableStateOf(categories[0]) }
 
-    val context = LocalContext.current
-    var uri by remember { mutableStateOf(Uri.EMPTY) }
-    var image = ContextCompat.getDrawable(context, R.drawable.ic_launcher_background)
+    // Taux de taxe
+    var taxInput by remember { mutableStateOf("") }
+    val taxPercentage = taxInput.toFloatOrNull() ?: 0f
 
-    Scaffold (
+    // Gestion des images
+    var uri by remember { mutableStateOf(Uri.EMPTY) }
+
+    Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.title_add_item)) },
@@ -83,22 +86,25 @@ fun AddItemScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding).padding(16.dp),
+                .padding(innerPadding)
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = if(listUiState.lastScanValue.displayValue == "") stringResource(R.string.no_barcode)
-                    else stringResource(
-                        R.string.barcode_value,
-                        listUiState.lastScanValue.displayValue
-                    ),
+                text = if (listUiState.lastScanValue.displayValue.isEmpty())
+                    stringResource(R.string.no_barcode)
+                else stringResource(
+                    R.string.barcode_value,
+                    listUiState.lastScanValue.displayValue
+                ),
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.Gray
             )
 
             HorizontalDivider()
 
+            // Champ de prix
             OutlinedTextField(
                 label = { Text(stringResource(R.string.price)) },
                 placeholder = { Text("0") },
@@ -112,13 +118,12 @@ fun AddItemScreen(
                 onValueChange = {
                     if (it.toDoubleOrNull() != null || it.isEmpty())
                         priceInput = it
-                                },
+                },
                 isError = priceInput.isNotEmpty() && priceInput.toDoubleOrNull() == null,
                 modifier = Modifier.fillMaxWidth()
             )
 
-
-            // Category dropdown
+            // Dropdown pour la catégorie
             ExposedDropdownMenuBox(
                 expanded = expanded,
                 onExpandedChange = { expanded = !expanded }
@@ -127,12 +132,12 @@ fun AddItemScreen(
                     value = stringResource(selectedCategory.name),
                     onValueChange = {},
                     label = { Text(stringResource(R.string.placeholder_category)) },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)},
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                     readOnly = true,
                     colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
                     modifier = Modifier.menuAnchor().fillMaxWidth()
                 )
-                ExposedDropdownMenu (
+                ExposedDropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
                 ) {
@@ -148,12 +153,26 @@ fun AddItemScreen(
                 }
             }
 
-            Text(
-                text = stringResource(R.string.optional_infos),
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(top = 40.dp)
+            // Champ de taxe
+            OutlinedTextField(
+                label = { Text(stringResource(R.string.tax_percentage)) },
+                placeholder = { Text("0") },
+                singleLine = true,
+                trailingIcon = { Text("%") },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next
+                ),
+                value = taxInput,
+                onValueChange = {
+                    if (it.toFloatOrNull() != null || it.isEmpty())
+                        taxInput = it
+                },
+                isError = taxInput.isNotEmpty() && taxInput.toFloatOrNull() == null,
+                modifier = Modifier.fillMaxWidth()
             )
 
+            // Champ pour le nom de l'article
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
@@ -166,37 +185,39 @@ fun AddItemScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // Photo widget (slightly different between the app and the preview)
-            if (!LocalInspectionMode.current) {
-                TakePhotoFromCamera() { uri = it }
-                if (uri != Uri.EMPTY) {
-                    val inputStream = LocalContext.current.contentResolver.openInputStream(uri)
-                    image = Drawable.createFromStream(inputStream, uri.toString())
-                }
-            }
-            else
-                PhotoCapture(Uri.EMPTY)
+            // Capture ou sélection de photo
+            TakePhotoFromCamera { uri = it }
 
             Spacer(modifier = Modifier.weight(1f))
 
+            // Boutons de validation et annulation
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 OutlinedButton(
                     onClick = onCancelButtonClicked,
-                    modifier = Modifier.weight(1f).padding(end = 8.dp)
-                ) { Text(stringResource(R.string.cancel)) }
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp)
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
                 Button(
-                    onClick = { onValidateButtonClicked(
-                        Article(
-                            name,
-                            selectedCategory,
-                            price,
-                            image
+                    onClick = {
+                        onValidateButtonClicked(
+                            Article(
+                                name = name,
+                                categoryName = selectedCategory.name,
+                                taxPercentage = taxPercentage,
+                                price = price,
+                                imageResource = uri.toString()
+                            )
                         )
-                    ) },
-                    modifier = Modifier.weight(1f).padding(start = 8.dp)
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 8.dp)
                 ) {
                     Text(stringResource(R.string.finish))
                 }
@@ -204,6 +225,7 @@ fun AddItemScreen(
         }
     }
 }
+
 
 fun CheckFieldsAndSubmit() {
 

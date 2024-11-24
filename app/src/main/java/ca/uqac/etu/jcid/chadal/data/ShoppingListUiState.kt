@@ -20,7 +20,7 @@ fun calculateTotal(articles: List<Article>): Double {
     var total:Double = 0.0
     articles.forEach {
         // Tax calculation & application
-        val price = it.price * (1 + it.category.taxPercentage)
+        val price = it.price * (1 + it.taxPercentage)
         total += price
     }
     return total

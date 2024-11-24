@@ -91,4 +91,5 @@ dependencies {
 
     implementation("io.coil-kt.coil3:coil-compose:3.0.0-rc02")
     implementation("com.google.accompanist:accompanist-drawablepainter:0.36.0")
+    implementation("io.coil-kt:coil-compose:2.4.0")
 }
