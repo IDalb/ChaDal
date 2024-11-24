@@ -53,6 +53,7 @@ import java.util.Objects
 fun AddItemScreen(
     modifier: Modifier = Modifier,
     listUiState: ShoppingListUiState,
+    currentShoppingListId: Long?,
     onCancelButtonClicked: () -> Unit = {},
     onValidateButtonClicked: (Article) -> Unit = {}
 ) {
@@ -67,6 +68,7 @@ fun AddItemScreen(
 
     val context = LocalContext.current
     var uri by remember { mutableStateOf(Uri.EMPTY) }
+    var currentShoppingListId by remember { mutableStateOf(0) } // Default to 0 (or another appropriate default value)
 
     Scaffold(
         topBar = {
@@ -184,6 +186,7 @@ fun AddItemScreen(
                     onClick = {
                         onValidateButtonClicked(
                             Article(
+                                shoppingListId = currentShoppingListId,
                                 name = name,
                                 categoryName = selectedCategory.name,
                                 taxPercentage = selectedCategory.taxPercentage,
@@ -191,6 +194,7 @@ fun AddItemScreen(
                                 imageResource = uri.toString()
                             )
                         )
+
                     },
                     modifier = Modifier.weight(1f).padding(start = 8.dp)
                 ) {
@@ -294,10 +298,13 @@ fun Context.createImageFile(): File {
     return image
 }
 
+
+
 @Preview
 @Composable
 fun AddItemScreenPreview() {
     ChaDalTheme {
-        AddItemScreen(listUiState = ShoppingListUiState())
+        AddItemScreen(listUiState = ShoppingListUiState(),
+            currentShoppingListId = 100)
     }
 }

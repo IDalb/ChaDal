@@ -7,7 +7,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-@Database(entities = [ShoppingListEntity::class, Article::class], version = 3, exportSchema = false)
+@Database(entities = [ShoppingListEntity::class, Article::class], version = 4, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun shoppingListDao(): ShoppingListDao
     abstract fun articleDao(): ArticleDao

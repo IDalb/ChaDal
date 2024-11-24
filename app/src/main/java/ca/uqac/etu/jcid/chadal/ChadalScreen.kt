@@ -39,6 +39,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -62,6 +64,9 @@ fun ChadalApp(
     val dataStoreManager = remember { DataStoreManager(context, shoppingListDao) }
     val coroutineScope = rememberCoroutineScope()
     val date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
+
+
+    var currentShoppingListId by remember { mutableStateOf<Long?>(null) }
 
     Scaffold() { it
         NavHost(
@@ -110,13 +115,14 @@ fun ChadalApp(
                         coroutineScope.launch {
                             // Sauvegarde des données dans la base de données
                             withContext(Dispatchers.IO) {
-                                uiState.budget?.let { it1 ->
-                                    dataStoreManager.saveShoppingListToDatabase(
-                                        budget = it1,
+                                uiState.budget?.let { budget ->
+                                    val listId = dataStoreManager.saveShoppingListToDatabase(
+                                        budget = budget,
                                         date = date,
                                         article = uiState.articles.size,
                                         total = uiState.total
                                     )
+                                    currentShoppingListId = 1000 // Stocke l'ID
                                 }
                             }
                             // Retour à l'écran d'accueil
@@ -129,6 +135,7 @@ fun ChadalApp(
                 )
             }
 
+
             // Autres écrans restent inchangés
             composable(route = ChadalScreens.OldList.name) {
                 OldListScreen(
@@ -140,6 +147,7 @@ fun ChadalApp(
             composable(route = ChadalScreens.ListComposition.name) {
                 ListCompositionScreen(
                     listUiState = uiState,
+                    currentShoppingListId = currentShoppingListId,
                     onAddItemButtonClicked = { navController.navigate(ChadalScreens.Scan.name) },
                     onRemoveItemButtonClicked = { article -> viewModel.removeArticle(article) },
                     onFinishShoppingButtonClicked = {
@@ -147,6 +155,7 @@ fun ChadalApp(
                     }
                 )
             }
+
             composable(route = ChadalScreens.Scan.name) {
                 ScanScreen(
                     onBarcodeScanned = { barcodeValue ->
@@ -162,9 +171,11 @@ fun ChadalApp(
                     },
                 )
             }
-            composable(route = ChadalScreens.AddItem.name) {
-                AddItemScreen(
+            composable(
+                route = ChadalScreens.AddItem.name
+            ) {  AddItemScreen(
                     listUiState = uiState,
+                    currentShoppingListId = currentShoppingListId,
                     onValidateButtonClicked = { article ->
                         viewModel.addArticle(article)
                         navController.popBackStack(ChadalScreens.ListComposition.name, false)
@@ -174,6 +185,7 @@ fun ChadalApp(
                     }
                 )
             }
+
         }
     }
 }

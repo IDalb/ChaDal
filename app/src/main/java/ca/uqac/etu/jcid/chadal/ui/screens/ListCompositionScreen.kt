@@ -67,10 +67,12 @@ import com.google.accompanist.drawablepainter.rememberDrawablePainter
 @Composable
 fun ListCompositionScreen(
     modifier: Modifier = Modifier,
+    currentShoppingListId: Long?, // Ajoutez ce paramètre
     listUiState: ShoppingListUiState,
     onAddItemButtonClicked: () -> Unit = {},
     onRemoveItemButtonClicked: (Article) -> Unit = {},
     onFinishShoppingButtonClicked: () -> Unit = {}
+
 ) {
     updateTotal(listUiState)
 
