@@ -33,7 +33,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -47,12 +46,6 @@ import ca.uqac.etu.jcid.chadal.R
 import ca.uqac.etu.jcid.chadal.data.DataStoreManager
 import ca.uqac.etu.jcid.chadal.data.ShoppingListDao
 import ca.uqac.etu.jcid.chadal.ui.Component.CardList
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -52,7 +52,7 @@ fun ArticleCompositionScreen(
     modifier: Modifier = Modifier,
     onBackClicked: () -> Unit
 ) {
-    // Récupère les articles associés à la liste actuelle
+
     val articles by articleDao.getArticlesByShoppingListId(currentShoppingListId).collectAsState(initial = emptyList())
 
     Scaffold(
@@ -137,7 +137,7 @@ fun ArticleCard2(
                 )
                 Text(
                     text = "%.2f CAD".format(
-                        article.price * (1 + article.taxPercentage / 100) // Correction : taxPercentage est en %
+                        article.price * (1 + article.taxPercentage / 100)
                     ),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(top = 4.dp)

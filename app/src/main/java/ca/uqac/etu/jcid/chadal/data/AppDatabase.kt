@@ -16,20 +16,20 @@ abstract class AppDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
-        // Définir la migration de la version 2 à 3
+
         private val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                // Vérifiez si la table existe
+
                 val cursor = database.query("SELECT name FROM sqlite_master WHERE type='table' AND name='article_table'")
                 val tableExists = cursor.moveToFirst()
                 cursor.close()
 
                 if (tableExists) {
-                    // Renommer l'ancienne table
+
                     database.execSQL("ALTER TABLE article_table RENAME TO article_table_old")
                 }
 
-                // Créer la nouvelle table
+
                 database.execSQL(
                     """
                     CREATE TABLE article_table (
@@ -44,7 +44,7 @@ abstract class AppDatabase : RoomDatabase() {
                 )
 
                 if (tableExists) {
-                    // Copier les données (avec transformation si nécessaire)
+
                     database.execSQL(
                         """
                         INSERT INTO article_table (id, name, categoryName, price, taxPercentage, imageResource)
@@ -57,7 +57,7 @@ abstract class AppDatabase : RoomDatabase() {
                         """
                     )
 
-                    // Supprimer l'ancienne table
+
                     database.execSQL("DROP TABLE article_table_old")
                 }
             }
@@ -70,8 +70,8 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "shopping_database"
                 )
-                    .addMigrations(MIGRATION_2_3) // Ajout de la migration ici
-                    .fallbackToDestructiveMigration() // Optionnel : supprime les données en cas de changement non géré
+                    .addMigrations(MIGRATION_2_3)
+                    .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance

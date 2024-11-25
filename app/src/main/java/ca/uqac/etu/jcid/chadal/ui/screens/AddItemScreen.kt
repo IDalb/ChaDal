@@ -19,11 +19,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.* // For paddings, spacings etc.
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.* // Compose material 3
-import androidx.compose.runtime.* // For state variables
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -59,20 +59,19 @@ fun AddItemScreen(
     articleDao: ArticleDao,
     onValidateButtonClicked: (Article) -> Unit,
     onCancelButtonClicked: () -> Unit
+
 ) {
     var priceInput by remember { mutableStateOf("") }
     val price = priceInput.toDoubleOrNull() ?: 0.0
 
     var name by remember { mutableStateOf("") }
 
-    // Controls expansion state of the category dropdown menu
     var expanded by remember { mutableStateOf(false) }
-    var selectedCategory by remember { mutableStateOf(categories[0]) } // Default category
+    var selectedCategory by remember { mutableStateOf(categories[0]) }
 
     val context = LocalContext.current
     var uri by remember { mutableStateOf(Uri.EMPTY) }
 
-    // Récupère le scope de la coroutine
     val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
@@ -94,7 +93,6 @@ fun AddItemScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Display the last scanned barcode
             Text(
                 text = if (listUiState.lastScanValue.displayValue == "") stringResource(R.string.no_barcode)
                 else stringResource(
@@ -105,10 +103,9 @@ fun AddItemScreen(
                 color = Color.Gray
             )
 
-            // Horizontal divider
             Divider()
 
-            // Input for price
+
             OutlinedTextField(
                 label = { Text(stringResource(R.string.price)) },
                 placeholder = { Text("0") },
@@ -127,7 +124,7 @@ fun AddItemScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // Category dropdown menu
+
             ExposedDropdownMenuBox(
                 expanded = expanded,
                 onExpandedChange = { expanded = !expanded }
@@ -157,7 +154,7 @@ fun AddItemScreen(
                 }
             }
 
-            // Optional name input
+
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
@@ -170,14 +167,14 @@ fun AddItemScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // Image capture widget
+
             if (!LocalInspectionMode.current) {
                 TakePhotoFromCamera { uri = it }
             }
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Buttons
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
@@ -191,24 +188,15 @@ fun AddItemScreen(
                     onClick = {
                         println("current id" + currentShoppingListId)
                         val article = Article(
-                            shoppingListId = currentShoppingListId ?: 0, // Utilisez currentShoppingListId, sinon 0 par défaut
+                            shoppingListId = currentShoppingListId ?: 0,
                             name = name,
                             categoryName = selectedCategory.name,
                             taxPercentage = selectedCategory.taxPercentage,
                             price = price,
                             imageResource = uri.toString()
                         )
-
-                        // Appel de la fonction onValidateButtonClicked pour valider l'article
                         onValidateButtonClicked(article)
 
-                        // Insérer l'article dans la base de données en utilisant coroutineScope
-                        coroutineScope.launch {
-                            // Exécution sur le thread IO
-                            withContext(Dispatchers.IO) {
-                                articleDao.insertArticle(article)
-                            }
-                        }
                     },
                     modifier = Modifier.weight(1f).padding(start = 8.dp)
                 ) {

@@ -20,10 +20,10 @@ import androidx.room.PrimaryKey
 data class Article(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val shoppingListId: Long, // Clé étrangère pour lier à ShoppingListEntity
+    val shoppingListId: Long,
     val name: String,
-    val categoryName: Int, // Int pour référencer un ArticleCategory
+    val categoryName: Int,
     val taxPercentage: Float,
     val price: Double,
-    val imageResource: String? = null // URI ou chemin vers l'image
+    val imageResource: String? = null
 )

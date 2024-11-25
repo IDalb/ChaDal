@@ -36,7 +36,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,7 +51,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ca.uqac.etu.jcid.chadal.R
 import ca.uqac.etu.jcid.chadal.data.Article
-import ca.uqac.etu.jcid.chadal.data.ArticleDao
 import ca.uqac.etu.jcid.chadal.data.ShoppingListUiState
 import coil.compose.rememberAsyncImagePainter
 
@@ -62,15 +60,12 @@ import coil.compose.rememberAsyncImagePainter
 @Composable
 fun ListCompositionScreen(
     modifier: Modifier = Modifier,
-    currentShoppingListId:Long?,
     listUiState: ShoppingListUiState,
-    articleDao: ArticleDao,
     onAddItemButtonClicked: () -> Unit = {},
     onRemoveItemButtonClicked: (Article) -> Unit = {},
     onFinishShoppingButtonClicked: () -> Unit = {}
 
 ) {
-
     updateTotal(listUiState)
 
     Scaffold(
@@ -219,6 +214,7 @@ fun ArticleCard(
                     )
                 }
 
+
                 Text(
                     text = article.name,
                     style = MaterialTheme.typography.titleMedium,
@@ -231,13 +227,14 @@ fun ArticleCard(
                 )
                 Text(
                     text = "%.2f CAD".format(
-                        article.price * (1 + article.taxPercentage / 100) // Correction : taxPercentage est en %
+                        article.price * (1 + article.taxPercentage / 100)
                     ),
                     style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(top = 4.dp)
                 )
             }
         }
+
 
         DropdownMenu(
             expanded = contextualMenuExpanded,
@@ -254,8 +251,6 @@ fun ArticleCard(
         }
     }
 }
-
-
 
 /*
 @Preview
