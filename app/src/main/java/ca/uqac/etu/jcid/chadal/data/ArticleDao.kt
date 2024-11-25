@@ -3,7 +3,6 @@ package ca.uqac.etu.jcid.chadal.data
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Update
 import androidx.room.Delete
 import androidx.room.OnConflictStrategy
 import kotlinx.coroutines.flow.Flow

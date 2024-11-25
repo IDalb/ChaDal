@@ -25,4 +25,5 @@ interface ShoppingListDao {
     fun deleteAllShoppingLists()
 
 
+
 }

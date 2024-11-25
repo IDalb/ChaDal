@@ -156,6 +156,7 @@ fun ChadalApp(
                 val currentShoppingListId = viewModel.getCurrentShoppingListId()
                 ListCompositionScreen(
                     listUiState = uiState,
+                    articleDao = articleDao,
                     currentShoppingListId = currentShoppingListId,
                     onAddItemButtonClicked = { navController.navigate(ChadalScreens.Scan.name) },
                     onRemoveItemButtonClicked = { article -> viewModel.removeArticle(article) },

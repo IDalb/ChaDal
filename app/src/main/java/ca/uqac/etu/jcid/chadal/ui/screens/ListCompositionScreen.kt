@@ -36,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,6 +52,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ca.uqac.etu.jcid.chadal.R
 import ca.uqac.etu.jcid.chadal.data.Article
+import ca.uqac.etu.jcid.chadal.data.ArticleDao
 import ca.uqac.etu.jcid.chadal.data.ShoppingListUiState
 import coil.compose.rememberAsyncImagePainter
 
@@ -60,13 +62,15 @@ import coil.compose.rememberAsyncImagePainter
 @Composable
 fun ListCompositionScreen(
     modifier: Modifier = Modifier,
-    currentShoppingListId: Long?,
+    currentShoppingListId:Long?,
     listUiState: ShoppingListUiState,
+    articleDao: ArticleDao,
     onAddItemButtonClicked: () -> Unit = {},
     onRemoveItemButtonClicked: (Article) -> Unit = {},
     onFinishShoppingButtonClicked: () -> Unit = {}
 
 ) {
+
     updateTotal(listUiState)
 
     Scaffold(
