@@ -5,11 +5,17 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import androidx.room.Delete
+import androidx.room.OnConflictStrategy
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ArticleDao {
+    @Query("SELECT * FROM article_table WHERE shoppingListId = :shoppingListId")
+    fun getArticlesByShoppingListId(shoppingListId: Int): Flow<List<Article>>
 
-    @Query("SELECT * FROM article_table ORDER BY name ASC")
-    fun getAllArticles(): List<Article> // Retourne une liste d'articles
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertArticle(article: Article)
+
+    @Delete
+    fun deleteArticle(article: Article)
 }

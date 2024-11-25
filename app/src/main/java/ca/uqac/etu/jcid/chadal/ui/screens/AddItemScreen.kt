@@ -3,7 +3,6 @@ package ca.uqac.etu.jcid.chadal.ui.screens
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -29,7 +28,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
@@ -38,24 +36,29 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import ca.uqac.etu.jcid.chadal.R
 import ca.uqac.etu.jcid.chadal.data.Article
+import ca.uqac.etu.jcid.chadal.data.ArticleDao
 import ca.uqac.etu.jcid.chadal.data.ShoppingListUiState
 import ca.uqac.etu.jcid.chadal.data.categories
-import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
 import coil3.compose.rememberAsyncImagePainter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.Objects
+import androidx.compose.runtime.rememberCoroutineScope
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddItemScreen(
     modifier: Modifier = Modifier,
     listUiState: ShoppingListUiState,
-    currentShoppingListId: Long?,
-    onCancelButtonClicked: () -> Unit = {},
-    onValidateButtonClicked: (Article) -> Unit = {}
+    currentShoppingListId: Long,
+    articleDao: ArticleDao,
+    onValidateButtonClicked: (Article) -> Unit,
+    onCancelButtonClicked: () -> Unit
 ) {
     var priceInput by remember { mutableStateOf("") }
     val price = priceInput.toDoubleOrNull() ?: 0.0
@@ -68,7 +71,9 @@ fun AddItemScreen(
 
     val context = LocalContext.current
     var uri by remember { mutableStateOf(Uri.EMPTY) }
-    var currentShoppingListId by remember { mutableStateOf(0) } // Default to 0 (or another appropriate default value)
+
+    // Récupère le scope de la coroutine
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -184,17 +189,26 @@ fun AddItemScreen(
 
                 Button(
                     onClick = {
-                        onValidateButtonClicked(
-                            Article(
-                                shoppingListId = currentShoppingListId,
-                                name = name,
-                                categoryName = selectedCategory.name,
-                                taxPercentage = selectedCategory.taxPercentage,
-                                price = price,
-                                imageResource = uri.toString()
-                            )
+                        println("current id" + currentShoppingListId)
+                        val article = Article(
+                            shoppingListId = currentShoppingListId ?: 0, // Utilisez currentShoppingListId, sinon 0 par défaut
+                            name = name,
+                            categoryName = selectedCategory.name,
+                            taxPercentage = selectedCategory.taxPercentage,
+                            price = price,
+                            imageResource = uri.toString()
                         )
 
+                        // Appel de la fonction onValidateButtonClicked pour valider l'article
+                        onValidateButtonClicked(article)
+
+                        // Insérer l'article dans la base de données en utilisant coroutineScope
+                        coroutineScope.launch {
+                            // Exécution sur le thread IO
+                            withContext(Dispatchers.IO) {
+                                articleDao.insertArticle(article)
+                            }
+                        }
                     },
                     modifier = Modifier.weight(1f).padding(start = 8.dp)
                 ) {
@@ -299,12 +313,13 @@ fun Context.createImageFile(): File {
 }
 
 
-
+/*
 @Preview
 @Composable
 fun AddItemScreenPreview() {
     ChaDalTheme {
         AddItemScreen(listUiState = ShoppingListUiState(),
-            currentShoppingListId = 100)
+            currentShoppingListId = 100, articleDao = articleDao)
     }
 }
+*/

@@ -1,6 +1,5 @@
 package ca.uqac.etu.jcid.chadal
 
-import android.widget.Toast
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
@@ -8,7 +7,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -39,8 +37,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
+import ca.uqac.etu.jcid.chadal.ui.screens.ArticleCompositionScreen
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -52,6 +49,7 @@ enum class ChadalScreens {
     AddItem,
     ListSummary,
     OldList,
+    ArticleComposition
 }
 @Composable
 fun ChadalApp(
@@ -61,10 +59,10 @@ fun ChadalApp(
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val shoppingListDao = remember { AppDatabase.getDatabase(context).shoppingListDao() }
+    val articleDao = remember { AppDatabase.getDatabase(context).articleDao() } // Ajoutez cette ligne
     val dataStoreManager = remember { DataStoreManager(context, shoppingListDao) }
     val coroutineScope = rememberCoroutineScope()
     val date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
-
 
     var currentShoppingListId by remember { mutableStateOf<Long?>(null) }
 
@@ -80,10 +78,31 @@ fun ChadalApp(
                 fun startShopping() {
                     val budgetRemember = if (budget == 0.0) null else budget
                     viewModel.resetShoppingList()
+
                     if (budgetRemember != null) {
                         viewModel.setBudget(budgetRemember)
                     }
-                    navController.navigate(ChadalScreens.ListComposition.name)
+                    coroutineScope.launch {
+                        // Sauvegarde des données dans la base de données
+                        withContext(Dispatchers.IO) {
+                            uiState.budget?.let { budget ->
+                                val listId = dataStoreManager.saveShoppingListToDatabase(
+                                    budget = budget,
+                                    date = date,
+                                    article = uiState.articles.size,
+                                    total = uiState.total
+                                )
+                                withContext(Dispatchers.Main) {
+                                    // Met à jour l'ID dans le ViewModel
+                                    viewModel.setCurrentShoppingListId(listId)
+                                }
+                            }
+                        }
+
+                        navController.navigate(ChadalScreens.ListComposition.name)
+
+                    }
+
                 }
 
                 Dialog(
@@ -101,6 +120,7 @@ fun ChadalApp(
                             noBudgetOpenDialog = true
                         else
                             startShopping()
+
                     },
                     navController = navController,
                     dataStoreManager = dataStoreManager,
@@ -112,22 +132,10 @@ fun ChadalApp(
                 ListSummaryScreen(
                     listUiState = uiState,
                     onFinishButtonClicked = {
-                        coroutineScope.launch {
-                            // Sauvegarde des données dans la base de données
-                            withContext(Dispatchers.IO) {
-                                uiState.budget?.let { budget ->
-                                    val listId = dataStoreManager.saveShoppingListToDatabase(
-                                        budget = budget,
-                                        date = date,
-                                        article = uiState.articles.size,
-                                        total = uiState.total
-                                    )
-                                    currentShoppingListId = 1000 // Stocke l'ID
-                                }
-                            }
+
                             // Retour à l'écran d'accueil
                             navController.popBackStack(ChadalScreens.Home.name, false)
-                        }
+
                     },
                     onCancelButtonClicked = {
                         navController.popBackStack(ChadalScreens.ListComposition.name, false)
@@ -136,7 +144,7 @@ fun ChadalApp(
             }
 
 
-            // Autres écrans restent inchangés
+
             composable(route = ChadalScreens.OldList.name) {
                 OldListScreen(
                     navController = navController,
@@ -144,7 +152,8 @@ fun ChadalApp(
                     shoppingListDao = shoppingListDao
                 )
             }
-            composable(route = ChadalScreens.ListComposition.name) {
+            composable(route = ChadalScreens.ListComposition.name) { backStackEntry ->
+                val currentShoppingListId = viewModel.getCurrentShoppingListId()
                 ListCompositionScreen(
                     listUiState = uiState,
                     currentShoppingListId = currentShoppingListId,
@@ -171,13 +180,19 @@ fun ChadalApp(
                     },
                 )
             }
-            composable(
-                route = ChadalScreens.AddItem.name
-            ) {  AddItemScreen(
+            composable(route = ChadalScreens.AddItem.name) {
+                val currentShoppingListId = viewModel.getCurrentShoppingListId()
+                AddItemScreen(
                     listUiState = uiState,
                     currentShoppingListId = currentShoppingListId,
+                    articleDao = articleDao,
                     onValidateButtonClicked = { article ->
-                        viewModel.addArticle(article)
+                        coroutineScope.launch {
+                            withContext(Dispatchers.IO) {
+                                val newArticle = article.copy(shoppingListId = currentShoppingListId)
+                                articleDao.insertArticle(newArticle)
+                            }
+                        }
                         navController.popBackStack(ChadalScreens.ListComposition.name, false)
                     },
                     onCancelButtonClicked = {
@@ -186,6 +201,22 @@ fun ChadalApp(
                 )
             }
 
+            composable("ArticleCompositionScreen/{shoppingListId}") { backStackEntry ->
+                val shoppingListId = backStackEntry.arguments?.getString("shoppingListId")?.toInt() ?: 0
+                val articleDao = AppDatabase.getDatabase(LocalContext.current).articleDao()
+
+                // Collecte les articles en fonction de la liste courante
+                val articles = articleDao.getArticlesByShoppingListId(shoppingListId).collectAsState(initial = emptyList()).value
+
+                println("id list: $shoppingListId")
+                println("all articles from this list: ${articles.size}") // Ajout du nombre d'articles
+
+                ArticleCompositionScreen(
+                    currentShoppingListId = shoppingListId,
+                    articleDao = articleDao,
+                    onBackClicked = { navController.popBackStack() }
+                )
+            }
         }
     }
 }

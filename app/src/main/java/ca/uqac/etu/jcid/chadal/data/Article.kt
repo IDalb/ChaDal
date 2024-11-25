@@ -1,6 +1,5 @@
 package ca.uqac.etu.jcid.chadal.data
 
-import android.graphics.drawable.Drawable
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -21,7 +20,7 @@ import androidx.room.PrimaryKey
 data class Article(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val shoppingListId: Int, // Clé étrangère pour lier à ShoppingListEntity
+    val shoppingListId: Long, // Clé étrangère pour lier à ShoppingListEntity
     val name: String,
     val categoryName: Int, // Int pour référencer un ArticleCategory
     val taxPercentage: Float,

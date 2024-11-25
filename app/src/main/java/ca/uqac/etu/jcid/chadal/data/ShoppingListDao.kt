@@ -3,13 +3,15 @@ package ca.uqac.etu.jcid.chadal.data
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.google.android.engage.shopping.datamodel.ShoppingList
 import kotlinx.coroutines.flow.Flow
 
 
 @Dao
 interface ShoppingListDao {
-    @Insert
+    @Insert (onConflict = OnConflictStrategy.REPLACE)
     fun insertShoppingList(shoppingList: ShoppingListEntity) :Long
 
     @Delete
@@ -21,4 +23,6 @@ interface ShoppingListDao {
 
     @Query("DELETE FROM shopping_list")
     fun deleteAllShoppingLists()
+
+
 }

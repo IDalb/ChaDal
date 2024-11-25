@@ -1,5 +1,6 @@
 package ca.uqac.etu.jcid.chadal.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -71,16 +72,13 @@ fun OldListScreen(
             Button(
                 onClick = {
                     coroutineScope.launch {
-
                         withContext(Dispatchers.IO) {
                             dataStoreManager.clearAllShoppingLists()
                         }
-
-
                     }
                 },
                 modifier = Modifier
-                    .size(100.dp, 50.dp) // Fixed size for the square button
+                    .size(100.dp, 50.dp)
             ) {
                 Text(
                     text = "Clear",
@@ -96,15 +94,19 @@ fun OldListScreen(
                 items(shoppingLists) { shoppingList ->
                     CardList(
                         course = shoppingList,
-                        modifier = Modifier.padding(10.dp)
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .clickable {
+                                navController.navigate("ArticleCompositionScreen/${shoppingList.id}")
+                            }
                     )
                 }
-
 
             }
         }
     }
 }
+
 
 
 /*

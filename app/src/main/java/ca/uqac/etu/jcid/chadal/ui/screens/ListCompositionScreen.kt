@@ -45,21 +45,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import ca.uqac.etu.jcid.chadal.R
 import ca.uqac.etu.jcid.chadal.data.Article
-import ca.uqac.etu.jcid.chadal.data.ArticleCategory
 import ca.uqac.etu.jcid.chadal.data.ShoppingListUiState
-import ca.uqac.etu.jcid.chadal.data.categories
-import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
 import coil.compose.rememberAsyncImagePainter
-import com.google.accompanist.drawablepainter.rememberDrawablePainter
 
 
 @SuppressLint("DefaultLocale")
@@ -67,7 +60,7 @@ import com.google.accompanist.drawablepainter.rememberDrawablePainter
 @Composable
 fun ListCompositionScreen(
     modifier: Modifier = Modifier,
-    currentShoppingListId: Long?, // Ajoutez ce paramètre
+    currentShoppingListId: Long?,
     listUiState: ShoppingListUiState,
     onAddItemButtonClicked: () -> Unit = {},
     onRemoveItemButtonClicked: (Article) -> Unit = {},
@@ -202,9 +195,7 @@ fun ArticleCard(
             )
         ) {
             Column(modifier = Modifier.padding(8.dp)) {
-                // Affichage de l'image
                 if (article.imageResource.isNullOrEmpty()) {
-                    // Image par défaut si aucune ressource n'est disponible
                     Image(
                         painter = painterResource(id = R.drawable.ic_launcher_background),
                         contentDescription = null,
@@ -224,13 +215,11 @@ fun ArticleCard(
                     )
                 }
 
-                // Nom de l'article
                 Text(
                     text = article.name,
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(top = 4.dp)
                 )
-                // Nom de la catégorie
                 Text(
                     text = article.categoryName.toString(),
                     style = MaterialTheme.typography.labelMedium,
@@ -246,7 +235,6 @@ fun ArticleCard(
             }
         }
 
-        // Menu contextuel
         DropdownMenu(
             expanded = contextualMenuExpanded,
             onDismissRequest = { contextualMenuExpanded = false }
