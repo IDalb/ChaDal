@@ -44,6 +44,13 @@ fun CardList(
                     .padding(bottom = 16.dp)
                     .height(60.dp)
             )
+            Text(
+                text = "Total: ${course.total} $",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .height(60.dp)
+            )
 
             Spacer(modifier = Modifier.weight(1f))
 
