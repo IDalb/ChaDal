@@ -199,9 +199,7 @@ fun ArticleCard(
                         painter = painterResource(id = R.drawable.ic_launcher_background),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(7f / 4f)
+                        modifier = Modifier.fillMaxWidth().aspectRatio(7f / 4f)
                     )
                 } else {
                     Image(

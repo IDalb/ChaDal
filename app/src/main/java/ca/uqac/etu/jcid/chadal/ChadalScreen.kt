@@ -37,6 +37,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.compose.runtime.rememberCoroutineScope
+import ca.uqac.etu.jcid.chadal.data.ShoppingListEntity
 import ca.uqac.etu.jcid.chadal.ui.screens.ArticleCompositionScreen
 import java.text.SimpleDateFormat
 import java.util.Date

@@ -138,6 +138,7 @@ fun AddItemScreen(
                     colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
                     modifier = Modifier.menuAnchor().fillMaxWidth()
                 )
+
                 ExposedDropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
@@ -153,7 +154,11 @@ fun AddItemScreen(
                     }
                 }
             }
-
+            Text(
+                text = stringResource(R.string.optional_infos),
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(top = 40.dp)
+            )
 
             OutlinedTextField(
                 value = name,
