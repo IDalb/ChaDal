@@ -87,8 +87,9 @@ fun ArticleCompositionScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ArticleCard2(
+    modifier: Modifier = Modifier,
     article: Article,
-    modifier: Modifier = Modifier
+
 ) {
     val haptics = LocalHapticFeedback.current
     var contextualMenuExpanded by remember { mutableStateOf(false) }
@@ -104,15 +105,13 @@ fun ArticleCard2(
                 }
             )
         ) {
-            Column(modifier = Modifier.padding(8.dp)) {
+            Column(modifier = modifier) {
                 if (article.imageResource.isNullOrEmpty()) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_launcher_background),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(7f / 4f)
+                        modifier = Modifier.fillMaxWidth().aspectRatio(7f / 4f)
                     )
                 } else {
                     Image(
@@ -124,37 +123,34 @@ fun ArticleCard2(
                             .aspectRatio(7f / 4f)
                     )
                 }
-
-                Text(
-                    text = article.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-                Text(
-                    text = article.categoryName.toString(),
-                    style = MaterialTheme.typography.labelMedium,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-                Text(
-                    text = "%.2f CAD".format(
-                        article.price * (1 + article.taxPercentage / 100)
-                    ),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
+                Column(modifier = modifier.padding(8.dp)) {
+                    Text(
+                        text = article.name,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Text(
+                        text = stringResource(article.categoryName),
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                    Text(
+                        text = "%.2f CAD".format(article.price),
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(0.dp, 4.dp, 0.dp, 0.dp)
+                    )
+                }
             }
         }
 
+        // Context menu
         DropdownMenu(
             expanded = contextualMenuExpanded,
             onDismissRequest = { contextualMenuExpanded = false }
         ) {
             DropdownMenuItem(
                 leadingIcon = { Icon(painterResource(R.drawable.delete), null) },
-                text = { Text(stringResource(R.string.delete_article)) },
+                text = { Text("Delete article") },
                 onClick = {
                     contextualMenuExpanded = false
-
                 }
             )
         }
