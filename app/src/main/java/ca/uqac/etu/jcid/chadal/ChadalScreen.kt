@@ -160,8 +160,19 @@ fun ChadalApp(
                     }
                 )
             }
-
             composable(route = ChadalScreens.Scan.name) {
+                var manualEntryOpenDialog by remember { mutableStateOf(false) }
+                FieldDialog(
+                    opened = manualEntryOpenDialog,
+                    onDismissRequest = { manualEntryOpenDialog = false },
+                    onConfirmation = { value ->
+                        manualEntryOpenDialog = false
+                        viewModel.uiState.value.lastScanValue = BarcodeValue(value, value)
+                        navController.navigate(ChadalScreens.AddItem.name)
+                    },
+                    dialogTitle = stringResource(R.string.enter_code_manually),
+                )
+
                 ScanScreen(
                     onBarcodeScanned = { barcodeValue ->
                         viewModel.uiState.value.lastScanValue = barcodeValue
@@ -171,6 +182,7 @@ fun ChadalApp(
                         viewModel.uiState.value.lastScanValue = BarcodeValue("", "")
                         navController.navigate(ChadalScreens.AddItem.name)
                     },
+                    onManualEntryButtonClicked = { manualEntryOpenDialog = true },
                     onCancelButtonClicked = {
                         navController.popBackStack(ChadalScreens.ListComposition.name, false)
                     },
