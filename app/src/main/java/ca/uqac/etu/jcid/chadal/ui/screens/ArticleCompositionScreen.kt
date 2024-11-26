@@ -141,19 +141,7 @@ fun ArticleCard2(
             }
         }
 
-        // Context menu
-        DropdownMenu(
-            expanded = contextualMenuExpanded,
-            onDismissRequest = { contextualMenuExpanded = false }
-        ) {
-            DropdownMenuItem(
-                leadingIcon = { Icon(painterResource(R.drawable.delete), null) },
-                text = { Text("Delete article") },
-                onClick = {
-                    contextualMenuExpanded = false
-                }
-            )
-        }
+
     }
 }
 
