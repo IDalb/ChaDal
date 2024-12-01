@@ -31,21 +31,23 @@ fun CardList(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
+
             Text(
-                text = "Course: Nombre d'article ${course.article}",
-                style = MaterialTheme.typography.headlineSmall,
+                text = "Nombre d'articles : ${course.article}",
+                style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
             Text(
-                text = "Budget: ${course.budget} $",
+                text = "Budget : ${course.budget} $",
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
                     .padding(bottom = 16.dp)
                     .height(60.dp)
             )
+
             Text(
-                text = "Total: ${course.total} $",
+                text = "Total : ${course.total} $",
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
                     .padding(bottom = 16.dp)
@@ -58,15 +60,15 @@ fun CardList(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-
                 Text(
-                    text = "Date: ${course.date}",
+                    text = "Date : ${course.date}",
                     style = MaterialTheme.typography.bodySmall
                 )
             }
         }
     }
 }
+
 
 
 

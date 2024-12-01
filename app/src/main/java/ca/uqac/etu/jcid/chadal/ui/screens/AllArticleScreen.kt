@@ -62,9 +62,10 @@ import coil.compose.rememberAsyncImagePainter
 fun AllArticleScreen(
     navController: NavController,
     articleDao: ArticleDao,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onRemoveArticleButtonClicked: (Article) -> Unit = {}
 ) {
-    // Récupérer tous les articles de la base de données
+
     val allArticles by articleDao.getAllArticles().collectAsState(initial = emptyList())
 
     Scaffold(
@@ -105,13 +106,10 @@ fun AllArticleScreen(
                     ArticleCard(
                         article = article,
                         modifier = modifier.animateItemPlacement(),
-                        onRemoveItemButtonClicked = {
-                            // Ajoutez ici la logique de suppression si nécessaire
-                        }
+                        onRemoveItemButtonClicked = { onRemoveArticleButtonClicked(article) }
                     )
                 }
             }
         }
     }
 }
-

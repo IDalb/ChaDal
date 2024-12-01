@@ -154,11 +154,11 @@ fun ListCompositionScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(listUiState.articles) {
+            items(listUiState.articles) {article ->
                 ArticleCard(
-                    article = it,
+                    article = article,
                     modifier = modifier.animateItemPlacement(),
-                    onRemoveItemButtonClicked = onRemoveItemButtonClicked
+                    onRemoveItemButtonClicked = { onRemoveItemButtonClicked(article) }
                 )
             }
         }
@@ -241,6 +241,7 @@ fun ArticleCard(
                 onClick = {
                     contextualMenuExpanded = false
                     onRemoveItemButtonClicked(article)
+
                 }
             )
         }

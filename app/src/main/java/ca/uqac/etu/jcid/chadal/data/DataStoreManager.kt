@@ -5,10 +5,10 @@ import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 
-
 class DataStoreManager(
     private val context: Context,
-    private val shoppingListDao: ShoppingListDao
+    private val shoppingListDao: ShoppingListDao,
+    private val articleDao: ArticleDao
 ) {
 
     companion object {
@@ -19,15 +19,15 @@ class DataStoreManager(
     }
 
     suspend fun saveShoppingListToDatabase(budget: Double, date: String, article: Int, total: Double): Long {
-
         val shoppingListEntity = ShoppingListEntity(budget = budget, date = date, article = article, total = total)
-
-
         return shoppingListDao.insertShoppingList(shoppingListEntity)
     }
 
     fun clearAllShoppingLists() {
         shoppingListDao.deleteAllShoppingLists()
     }
-}
 
+    fun deleteArticle(article: Article){
+        articleDao.deleteArticle(article)
+    }
+}

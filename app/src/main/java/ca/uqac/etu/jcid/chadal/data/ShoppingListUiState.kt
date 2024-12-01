@@ -14,6 +14,7 @@ data class ShoppingListUiState (
 
     // Temporary scan data
     var lastScanValue: BarcodeValue = BarcodeValue("", "")
+
 )
 
 fun calculateTotal(articles: List<Article>): Double {
@@ -24,4 +25,8 @@ fun calculateTotal(articles: List<Article>): Double {
         total += price
     }
     return total
+}
+
+fun deleteArticle(articles: List<Article>){
+
 }

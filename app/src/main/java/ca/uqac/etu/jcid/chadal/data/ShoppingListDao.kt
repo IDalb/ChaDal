@@ -24,6 +24,4 @@ interface ShoppingListDao {
     @Query("DELETE FROM shopping_list")
     fun deleteAllShoppingLists()
 
-
-
 }

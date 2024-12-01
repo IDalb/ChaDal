@@ -136,6 +136,7 @@ fun ListSummaryScreen(
                     onClick = onFinishButtonClicked
                 ) {
                     Text(stringResource(R.string.finish))
+                    
                 }
             }
         }

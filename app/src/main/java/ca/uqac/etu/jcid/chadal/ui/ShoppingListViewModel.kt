@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.uqac.etu.jcid.chadal.data.Article
+import ca.uqac.etu.jcid.chadal.data.ArticleDao
 import ca.uqac.etu.jcid.chadal.data.ShoppingListUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,13 +14,15 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ca.uqac.etu.jcid.chadal.data.ShoppingListDao
 import ca.uqac.etu.jcid.chadal.data.calculateTotal
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-class ShoppingListViewModel (   ) : ViewModel() {
+class ShoppingListViewModel (
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ShoppingListUiState())
     val uiState: StateFlow<ShoppingListUiState> = _uiState.asStateFlow()
     private val _currentShoppingListId = MutableLiveData<Long>()
-    val currentShoppingListId: LiveData<Long> = _currentShoppingListId
 
 
 
@@ -36,6 +39,13 @@ class ShoppingListViewModel (   ) : ViewModel() {
         }
     }
 
+    fun addArticleToShoppingList(article: Article) {
+        _uiState.value = _uiState.value.copy(
+            articles = _uiState.value.articles + article, // Ajoute l'article
+            total = _uiState.value.total + article.price // Mets à jour le total
+        )
+    }
+
     fun addArticle(article: Article) {
         _uiState.update { currentState ->
             currentState.copy(
@@ -49,6 +59,7 @@ class ShoppingListViewModel (   ) : ViewModel() {
             currentState.copy(
                 articles = currentState.articles - article,
             )
+
         }
     }
     fun setBudget(budget: Double) {
@@ -63,7 +74,19 @@ class ShoppingListViewModel (   ) : ViewModel() {
     fun getCurrentShoppingListId(): Long {
         return _currentShoppingListId.value ?: 0L
     }
+    fun updateShoppingListInfo(total: Double, articleCount: Int) {
+
+        _uiState.value = _uiState.value.copy(
+            total = total,
+            articles = _uiState.value.articles,
+            budget = _uiState.value.budget,
+            lastScanValue = _uiState.value.lastScanValue
+        )
+    }
 
 
 
-}
+
+    }
+
+

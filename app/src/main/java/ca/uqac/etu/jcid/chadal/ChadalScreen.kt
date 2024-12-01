@@ -63,7 +63,7 @@ fun ChadalApp(
     val context = LocalContext.current
     val shoppingListDao = remember { AppDatabase.getDatabase(context).shoppingListDao() }
     val articleDao = remember { AppDatabase.getDatabase(context).articleDao() }
-    val dataStoreManager = remember { DataStoreManager(context, shoppingListDao) }
+    val dataStoreManager = remember { DataStoreManager(context, shoppingListDao, articleDao) }
     val coroutineScope = rememberCoroutineScope()
     val date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
 
@@ -133,16 +133,34 @@ fun ChadalApp(
                 ListSummaryScreen(
                     listUiState = uiState,
                     onFinishButtonClicked = {
+                        val total = uiState.total
+                        val articleCount = uiState.articles.size
+                        viewModel.updateShoppingListInfo(total, articleCount)
 
-                            navController.popBackStack(ChadalScreens.Home.name, false)
+                        coroutineScope.launch {
+                            withContext(Dispatchers.IO) {
+                                uiState.budget?.let { budget ->
+                                    val listId = dataStoreManager.saveShoppingListToDatabase(
+                                        budget = budget,
+                                        date = date,
+                                        article = articleCount,
+                                        total = total
+                                    )
+                                    withContext(Dispatchers.Main) {
+                                        viewModel.setCurrentShoppingListId(listId)
+                                    }
+                                }
+                            }
+                        }
 
+
+                        navController.popBackStack(ChadalScreens.Home.name, false)
                     },
                     onCancelButtonClicked = {
                         navController.popBackStack(ChadalScreens.ListComposition.name, false)
                     }
                 )
             }
-
 
 
             composable(route = ChadalScreens.OldList.name) {
@@ -156,7 +174,14 @@ fun ChadalApp(
                 ListCompositionScreen(
                     listUiState = uiState,
                     onAddItemButtonClicked = { navController.navigate(ChadalScreens.Scan.name) },
-                    onRemoveItemButtonClicked = { article -> viewModel.removeArticle(article) },
+                    onRemoveItemButtonClicked = { article ->
+                        viewModel.removeArticle(article)
+                        coroutineScope.launch {
+                            withContext(Dispatchers.IO) {
+                                articleDao.deleteArticle(article)
+                            }
+                        }
+                    },
                     onFinishShoppingButtonClicked = {
                         navController.navigate(ChadalScreens.ListSummary.name)
                     }
@@ -215,23 +240,34 @@ fun ChadalApp(
             composable(route = ChadalScreens.AllArticle.name) {
                 AllArticleScreen(
                     navController = navController,
-                    articleDao = articleDao
+                    articleDao = articleDao,
+                    onRemoveArticleButtonClicked = { article ->
+                        viewModel.removeArticle(article)
+                        coroutineScope.launch {
+                            withContext(Dispatchers.IO) {
+
+                                articleDao.deleteArticle(article)
+                            }
+                        }
+                    }
                 )
+
             }
 
 
             composable("ArticleCompositionScreen/{shoppingListId}") { backStackEntry ->
                 val shoppingListId = backStackEntry.arguments?.getString("shoppingListId")?.toInt() ?: 0
-                val articleDao = AppDatabase.getDatabase(LocalContext.current).articleDao()
-
-
-                val articles = articleDao.getArticlesByShoppingListId(shoppingListId).collectAsState(initial = emptyList()).value
-
+                val articles = articleDao.getArticlesByShoppingListId(shoppingListId)
+                    .collectAsState(initial = emptyList()).value
                 ArticleCompositionScreen(
                     currentShoppingListId = shoppingListId,
                     articleDao = articleDao,
                     onBackClicked = { navController.popBackStack() }
                 )
+                println("Nombre d'articles : ${articles.size}")
+                articles.forEach { article ->
+                    println("Article : ${article.name}, Prix : ${article.price}, Catégorie : ${article.categoryName}")
+                    }
             }
         }
     }
