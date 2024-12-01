@@ -1,21 +1,13 @@
 package ca.uqac.etu.jcid.chadal.ui
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import ca.uqac.etu.jcid.chadal.data.Article
-import ca.uqac.etu.jcid.chadal.data.ArticleDao
 import ca.uqac.etu.jcid.chadal.data.ShoppingListUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import ca.uqac.etu.jcid.chadal.data.ShoppingListDao
-import ca.uqac.etu.jcid.chadal.data.calculateTotal
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class ShoppingListViewModel (
 ) : ViewModel() {
@@ -83,6 +75,8 @@ class ShoppingListViewModel (
             lastScanValue = _uiState.value.lastScanValue
         )
     }
+
+
 
 
 

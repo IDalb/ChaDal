@@ -2,7 +2,6 @@ package ca.uqac.etu.jcid.chadal.data
 
 import android.content.Context
 import androidx.datastore.preferences.core.doublePreferencesKey
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 
 class DataStoreManager(
@@ -21,6 +20,26 @@ class DataStoreManager(
     suspend fun saveShoppingListToDatabase(budget: Double, date: String, article: Int, total: Double): Long {
         val shoppingListEntity = ShoppingListEntity(budget = budget, date = date, article = article, total = total)
         return shoppingListDao.insertShoppingList(shoppingListEntity)
+    }
+
+
+    suspend fun updateShoppingListInDatabase(
+        shoppingListId: Long,
+        budget: Double,
+        articleCount: Int,
+        total: Double
+    ) {
+
+        val shoppingListEntity = shoppingListDao.getShoppingListById(shoppingListId)
+        if (shoppingListEntity != null) {
+            val updatedShoppingList = shoppingListEntity.copy(
+                budget = budget,
+                article = articleCount,
+                total = total
+            )
+
+            shoppingListDao.updateShoppingList(updatedShoppingList)
+        }
     }
 
     fun clearAllShoppingLists() {

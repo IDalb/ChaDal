@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.google.android.engage.shopping.datamodel.ShoppingList
 import kotlinx.coroutines.flow.Flow
 
@@ -20,8 +21,12 @@ interface ShoppingListDao {
     @Query("SELECT * FROM shopping_list ORDER BY id DESC")
     fun getAllShoppingLists(): Flow<List<ShoppingListEntity>>
 
+    @Query("SELECT * FROM shopping_list WHERE id = :shoppingListId LIMIT 1")
+    fun getShoppingListById(shoppingListId: Long): ShoppingListEntity?
 
     @Query("DELETE FROM shopping_list")
     fun deleteAllShoppingLists()
 
+    @Update
+    fun updateShoppingList(shoppingList: ShoppingListEntity)
 }

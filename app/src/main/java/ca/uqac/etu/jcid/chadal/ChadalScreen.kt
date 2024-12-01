@@ -94,6 +94,7 @@ fun ChadalApp(
                                     article = uiState.articles.size,
                                     total = uiState.total
                                 )
+
                                 withContext(Dispatchers.Main) {
                                     viewModel.setCurrentShoppingListId(listId)
                                 }
@@ -135,24 +136,19 @@ fun ChadalApp(
                     onFinishButtonClicked = {
                         val total = uiState.total
                         val articleCount = uiState.articles.size
-                        viewModel.updateShoppingListInfo(total, articleCount)
-
-                        coroutineScope.launch {
-                            withContext(Dispatchers.IO) {
-                                uiState.budget?.let { budget ->
-                                    val listId = dataStoreManager.saveShoppingListToDatabase(
-                                        budget = budget,
-                                        date = date,
-                                        article = articleCount,
+                        val shoppingListId = viewModel.getCurrentShoppingListId()
+                        if (shoppingListId != null) {
+                            coroutineScope.launch {
+                                withContext(Dispatchers.IO) {
+                                    dataStoreManager.updateShoppingListInDatabase(
+                                        shoppingListId = shoppingListId,
+                                        budget = uiState.budget ?: 0.0,
+                                        articleCount = articleCount,
                                         total = total
                                     )
-                                    withContext(Dispatchers.Main) {
-                                        viewModel.setCurrentShoppingListId(listId)
-                                    }
                                 }
                             }
                         }
-
 
                         navController.popBackStack(ChadalScreens.Home.name, false)
                     },
@@ -161,6 +157,7 @@ fun ChadalApp(
                     }
                 )
             }
+
 
 
             composable(route = ChadalScreens.OldList.name) {
