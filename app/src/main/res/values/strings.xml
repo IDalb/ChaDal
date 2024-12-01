@@ -9,7 +9,9 @@
     <string name="title_list_old">Dernière liste de course</string>
     <string name="title_list_new">Nouvelle liste de course</string>
     <string name="title_list_summary">Finalisation de la liste de courses</string>
+    <string name="title_all_article">Liste des produits</string>
     <string name="title_scan">Scan du code-barres</string>
+    <string name="no_article">Pas d\'articles</string>
 
     <string name="start">Commencer</string>
     <string name="add_article">Ajouter un article</string>
@@ -63,4 +65,5 @@
     <string name="category_candy">Friandises, grignotines</string>
     <string name="category_drinks_tax">Boissons chaudes ou gazeuses</string>
     <string name="category_alcohol">Boisson alcoolisée</string>
+
 </resources>

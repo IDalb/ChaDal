@@ -17,4 +17,6 @@ interface ArticleDao {
 
     @Delete
     fun deleteArticle(article: Article)
+    @Query("SELECT * FROM article_table")
+    fun getAllArticles(): Flow<List<Article>>
 }

@@ -185,7 +185,9 @@ fun BottomNavigationBar(navController: NavController) {
         )
         NavigationBarItem(
             selected = selectedTabIndex == 2,
-            onClick = { selectedTabIndex = 2 },
+            onClick = {
+                selectedTabIndex = 2
+                navController.navigate(ChadalScreens.AllArticle.name) },
             icon = { Icon(Icons.Filled.ShoppingCart, contentDescription = "Saved products") },
             label = { Text("Produits") }
         )

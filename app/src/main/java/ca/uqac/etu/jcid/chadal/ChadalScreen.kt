@@ -38,6 +38,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.compose.runtime.rememberCoroutineScope
 import ca.uqac.etu.jcid.chadal.data.ShoppingListEntity
+import ca.uqac.etu.jcid.chadal.ui.screens.AllArticleScreen
 import ca.uqac.etu.jcid.chadal.ui.screens.ArticleCompositionScreen
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -50,7 +51,8 @@ enum class ChadalScreens {
     AddItem,
     ListSummary,
     OldList,
-    ArticleComposition
+    ArticleComposition,
+    AllArticle
 }
 @Composable
 fun ChadalApp(
@@ -210,6 +212,13 @@ fun ChadalApp(
                     }
                 )
             }
+            composable(route = ChadalScreens.AllArticle.name) {
+                AllArticleScreen(
+                    navController = navController,
+                    articleDao = articleDao
+                )
+            }
+
 
             composable("ArticleCompositionScreen/{shoppingListId}") { backStackEntry ->
                 val shoppingListId = backStackEntry.arguments?.getString("shoppingListId")?.toInt() ?: 0
