@@ -192,21 +192,30 @@ fun AddItemScreen(
                 Button(
                     onClick = {
                         println("current id" + currentShoppingListId)
+
+                        val imageUri = if (uri == Uri.EMPTY) {
+                            getImageUriForCategory(context, context.getString(selectedCategory.name)).toString()
+
+                        } else {
+                            uri.toString()
+                        }
+
                         val article = Article(
-                            shoppingListId = currentShoppingListId ?: 0,
+                            shoppingListId = currentShoppingListId,
                             name = name,
                             categoryName = selectedCategory.name,
                             taxPercentage = selectedCategory.taxPercentage,
                             price = price,
-                            imageResource = uri.toString()
+                            imageResource = imageUri
                         )
-                        onValidateButtonClicked(article)
 
+                        onValidateButtonClicked(article)
                     },
                     modifier = Modifier.weight(1f).padding(start = 8.dp)
                 ) {
                     Text(stringResource(R.string.finish))
                 }
+
             }
         }
     }

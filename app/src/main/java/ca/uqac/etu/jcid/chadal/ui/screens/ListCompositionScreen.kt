@@ -1,6 +1,8 @@
 package ca.uqac.etu.jcid.chadal.ui.screens
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
@@ -246,6 +248,21 @@ fun ArticleCard(
             )
         }
     }
+}
+
+fun getDrawableResourceForCategory(categoryName: String): Int {
+    return when (categoryName) {
+        "meat_fish_eggs" -> R.drawable.viande_poisson_oeuf
+        "fruits" -> R.drawable.fruits
+
+        else -> R.drawable.ic_launcher_background
+    }
+}
+
+
+fun getImageUriForCategory(context: Context, categoryName: String): Uri {
+    val resourceId = getDrawableResourceForCategory(categoryName)
+    return Uri.parse("android.resource://${context.packageName}/$resourceId")
 }
 
 
