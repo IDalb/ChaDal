@@ -193,12 +193,15 @@ fun AddItemScreen(
                     onClick = {
                         println("current id" + currentShoppingListId)
 
-                        val imageUri = if (uri == Uri.EMPTY) {
-                            getImageUriForCategory(context, context.getString(selectedCategory.name)).toString()
 
+                        val imageUri = if (uri == Uri.EMPTY) {
+
+                            Uri.parse("android.resource://${context.packageName}/${getImageForCategory(selectedCategory.name)}").toString()
                         } else {
+
                             uri.toString()
                         }
+
 
                         val article = Article(
                             shoppingListId = currentShoppingListId,
@@ -216,6 +219,8 @@ fun AddItemScreen(
                     Text(stringResource(R.string.finish))
                 }
 
+
+
             }
         }
     }
@@ -223,9 +228,15 @@ fun AddItemScreen(
 
 
 
-fun CheckFieldsAndSubmit() {
+fun getImageForCategory(categoryName: Int): Int {
+    return when (categoryName) {
+        R.string.category_meat_fish_eggs -> R.drawable.viande_poisson_oeuf
+        R.string.category_fruits -> R.drawable.fruits
 
+        else -> R.drawable.ic_launcher_background
+    }
 }
+
 
 @Composable
 fun PhotoCapture(capturedImageUri: Uri, captureFunction: ()->Unit = {}) {
@@ -266,6 +277,12 @@ fun PhotoCapture(capturedImageUri: Uri, captureFunction: ()->Unit = {}) {
             .aspectRatio(1f, true)
     ) { composable.invoke() }
 }
+
+@Composable
+fun TakePhotoFromPicture(setMethod: (Uri)->Unit){
+
+}
+
 
 @Composable
 fun TakePhotoFromCamera(setMethod: (Uri)->Unit) {
