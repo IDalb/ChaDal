@@ -232,7 +232,14 @@ fun getImageForCategory(categoryName: Int): Int {
     return when (categoryName) {
         R.string.category_meat_fish_eggs -> R.drawable.viande_poisson_oeuf
         R.string.category_fruits -> R.drawable.fruits
-
+        R.string.category_cereals -> R.drawable.cereals
+        R.string.category_produce -> R.drawable.produce
+        R.string.category_baby -> R.drawable.baby
+        R.string.category_drinks_no_tax -> R.drawable.drinks_no_tax
+        R.string.category_meals -> R.drawable.meals
+        R.string.category_candy -> R.drawable.candy
+        R.string.category_drinks_tax -> R.drawable.drinks_tax
+        R.string.category_alcohol -> R.drawable.alcohol
         else -> R.drawable.ic_launcher_background
     }
 }
@@ -278,10 +285,6 @@ fun PhotoCapture(capturedImageUri: Uri, captureFunction: ()->Unit = {}) {
     ) { composable.invoke() }
 }
 
-@Composable
-fun TakePhotoFromPicture(setMethod: (Uri)->Unit){
-
-}
 
 
 @Composable
