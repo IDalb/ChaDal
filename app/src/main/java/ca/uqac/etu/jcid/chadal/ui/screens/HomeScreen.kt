@@ -116,17 +116,12 @@ fun HomeScreen(
 
                                 showText.value = true
                             onStartShoppingButtonClicked(budget)
-
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(text = stringResource(R.string.start))
                     }
                 }
-            }
-
-            if (showText.value) {
-                Text(text = "Nouvelle liste créée!", style = MaterialTheme.typography.bodyLarge)
             }
 
             Spacer(modifier = Modifier.height(40.dp))
