@@ -15,10 +15,11 @@ class DataStoreManager(
         val DATE_KEY = stringPreferencesKey("date_key")
         val ARTICLE_KEY = stringPreferencesKey("article_key")
         val TOTAL_KEY = stringPreferencesKey("total_key")
+        val TITRE_KEY = stringPreferencesKey("title_key")
     }
 
-    suspend fun saveShoppingListToDatabase(budget: Double, date: String, article: Int, total: Double): Long {
-        val shoppingListEntity = ShoppingListEntity(budget = budget, date = date, article = article, total = total)
+    suspend fun saveShoppingListToDatabase(budget: Double, date: String, article: Int, total: Double, titre: String): Long {
+        val shoppingListEntity = ShoppingListEntity(budget = budget, date = date, article = article, total = total, titre = titre)
         return shoppingListDao.insertShoppingList(shoppingListEntity)
     }
 
@@ -27,7 +28,8 @@ class DataStoreManager(
         shoppingListId: Long,
         budget: Double,
         articleCount: Int,
-        total: Double
+        total: Double,
+        titre: String
     ) {
 
         val shoppingListEntity = shoppingListDao.getShoppingListById(shoppingListId)
@@ -35,7 +37,8 @@ class DataStoreManager(
             val updatedShoppingList = shoppingListEntity.copy(
                 budget = budget,
                 article = articleCount,
-                total = total
+                total = total,
+                titre = titre
             )
 
             shoppingListDao.updateShoppingList(updatedShoppingList)

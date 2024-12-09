@@ -31,12 +31,6 @@ class ShoppingListViewModel (
         }
     }
 
-    fun addArticleToShoppingList(article: Article) {
-        _uiState.value = _uiState.value.copy(
-            articles = _uiState.value.articles + article, // Ajoute l'article
-            total = _uiState.value.total + article.price // Mets à jour le total
-        )
-    }
 
     fun addArticle(article: Article) {
         _uiState.update { currentState ->

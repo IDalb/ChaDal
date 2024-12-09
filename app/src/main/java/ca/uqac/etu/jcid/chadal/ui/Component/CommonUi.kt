@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import ca.uqac.etu.jcid.chadal.ChadalApp
 import ca.uqac.etu.jcid.chadal.data.ShoppingListEntity
 import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
-
 @Composable
 fun CardList(
     course: ShoppingListEntity,
@@ -33,25 +32,34 @@ fun CardList(
         ) {
 
             Text(
+                text = course.titre,
+                style = MaterialTheme.typography.headlineMedium, // Style plus grand pour le titre
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+            )
+
+
+            Text(
                 text = "Nombre d'articles : ${course.article}",
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
             )
+
 
             Text(
                 text = "Budget : ${course.budget} $",
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
-                    .padding(bottom = 16.dp)
-                    .height(60.dp)
+                    .padding(bottom = 8.dp)
             )
 
+            // Total
             Text(
                 text = "Total : ${course.total} $",
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
-                    .padding(bottom = 16.dp)
-                    .height(60.dp)
+                    .padding(bottom = 8.dp)
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -68,6 +76,7 @@ fun CardList(
         }
     }
 }
+
 
 
 

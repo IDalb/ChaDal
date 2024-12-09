@@ -125,32 +125,6 @@ fun HomeScreen(
             }
 
             Spacer(modifier = Modifier.height(40.dp))
-            Text(
-                text = "Dernières courses",
-                style = MaterialTheme.typography.headlineLarge,
-                modifier = Modifier.padding(bottom = 24.dp)
-            )
-
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            ) {
-                items(shoppingLists) { shoppingList ->
-                    CardList(
-                        course = shoppingList,
-                        modifier = Modifier.padding(10.dp)
-                    )
-                }
-
-            }
-            Spacer(modifier = Modifier.height(20.dp))
-            Button(
-                onClick = { /* Your click action */ },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "Afficher plus")
-            }
 
         }
     }

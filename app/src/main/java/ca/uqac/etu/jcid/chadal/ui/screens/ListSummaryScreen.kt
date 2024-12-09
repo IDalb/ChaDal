@@ -38,14 +38,13 @@ import ca.uqac.etu.jcid.chadal.R
 import ca.uqac.etu.jcid.chadal.data.ShoppingListUiState
 import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
 
-@SuppressLint("DefaultLocale")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListSummaryScreen(
     modifier: Modifier = Modifier,
     listUiState: ShoppingListUiState,
     onCancelButtonClicked: () -> Unit = {},
-    onFinishButtonClicked: () -> Unit = {}
+    onFinishButtonClicked: (String) -> Unit = {}
 ) {
     var listName by remember { mutableStateOf("") }
 
@@ -70,14 +69,15 @@ fun ListSummaryScreen(
                     R.plurals.article_number,
                     listUiState.articles.size,
                     listUiState.articles.size
-                    ),
+                ),
                 style = MaterialTheme.typography.bodyLarge,
             )
 
             HorizontalDivider(modifier = modifier.padding(16.dp, 24.dp))
 
             Text(
-                text = stringResource(R.string.total,
+                text = stringResource(
+                    R.string.total,
                     String.format("%.2f", listUiState.total),
                     stringResource(R.string.currency_cad)
                 ),
@@ -133,10 +133,9 @@ fun ListSummaryScreen(
                 }
                 Button(
                     modifier = Modifier.weight(1f),
-                    onClick = onFinishButtonClicked
+                    onClick = { onFinishButtonClicked(listName) }
                 ) {
                     Text(stringResource(R.string.finish))
-                    
                 }
             }
         }

@@ -92,7 +92,8 @@ fun ChadalApp(
                                     budget = budget,
                                     date = date,
                                     article = uiState.articles.size,
-                                    total = uiState.total
+                                    total = uiState.total,
+                                    titre = uiState.name
                                 )
 
                                 withContext(Dispatchers.Main) {
@@ -133,20 +134,20 @@ fun ChadalApp(
             composable(route = ChadalScreens.ListSummary.name) {
                 ListSummaryScreen(
                     listUiState = uiState,
-                    onFinishButtonClicked = {
+                    onFinishButtonClicked = { listName ->
                         val total = uiState.total
                         val articleCount = uiState.articles.size
+                        val titre = listName.ifEmpty { uiState.name }
                         val shoppingListId = viewModel.getCurrentShoppingListId()
-                        if (shoppingListId != null) {
-                            coroutineScope.launch {
-                                withContext(Dispatchers.IO) {
-                                    dataStoreManager.updateShoppingListInDatabase(
-                                        shoppingListId = shoppingListId,
-                                        budget = uiState.budget ?: 0.0,
-                                        articleCount = articleCount,
-                                        total = total
-                                    )
-                                }
+                        coroutineScope.launch {
+                            withContext(Dispatchers.IO) {
+                                dataStoreManager.updateShoppingListInDatabase(
+                                    shoppingListId = shoppingListId,
+                                    budget = uiState.budget ?: 0.0,
+                                    articleCount = articleCount,
+                                    total = total,
+                                    titre = titre
+                                )
                             }
                         }
 
