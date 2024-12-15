@@ -1,5 +1,5 @@
 package ca.uqac.etu.jcid.chadal.data
 
-import com.google.android.engage.shopping.datamodel.ShoppingList
-import kotlinx.coroutines.flow.Flow
-
+/**
+ * A non-class used to try to simulate a dao in previews
+ */

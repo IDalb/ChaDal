@@ -5,6 +5,10 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
+/**
+ * A data class that represents an article for the database.
+ */
+
 @Entity(
     tableName = "article_table",
     foreignKeys = [

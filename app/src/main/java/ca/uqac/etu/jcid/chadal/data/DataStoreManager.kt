@@ -4,6 +4,10 @@ import android.content.Context
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 
+/**
+ * The manager class for both databases (lists and articles)
+ */
+
 class DataStoreManager(
     private val context: Context,
     private val shoppingListDao: ShoppingListDao,

@@ -37,13 +37,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.compose.runtime.rememberCoroutineScope
-import ca.uqac.etu.jcid.chadal.data.ShoppingListEntity
 import ca.uqac.etu.jcid.chadal.ui.screens.AllArticleScreen
 import ca.uqac.etu.jcid.chadal.ui.screens.ArticleCompositionScreen
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+/**
+ * The main class of our app.
+ * It contains the navigation to the different screens as well as navigation logic.
+ */
+
+// The different screens of our app
 enum class ChadalScreens {
     Home,
     ListComposition,
@@ -51,7 +56,6 @@ enum class ChadalScreens {
     AddItem,
     ListSummary,
     OldList,
-    ArticleComposition,
     AllArticle
 }
 @Composable
@@ -74,11 +78,15 @@ fun ChadalApp(
             navController = navController,
             startDestination = ChadalScreens.Home.name
         ) {
+            // Home screen
             composable(route = ChadalScreens.Home.name) {
                 var noBudgetOpenDialog by remember { mutableStateOf(false) }
                 var budget = 0.0
 
+                // Method used when creating a shopping list from the home screen
                 fun startShopping() {
+                    // If no budget is set (null), we deactivate the budget progress bar and
+                    // display it as 'unlimited'
                     val budgetRemember = if (budget == 0.0) null else budget
                     viewModel.resetShoppingList()
 
@@ -108,6 +116,8 @@ fun ChadalApp(
 
                 }
 
+                // Dialog that pops up to warn the users that he hasn't entered a budget.
+                // It asks for its confirmation
                 Dialog(
                     opened = noBudgetOpenDialog,
                     onDismissRequest = { noBudgetOpenDialog = false },
@@ -131,6 +141,7 @@ fun ChadalApp(
                 )
             }
 
+            // List summary screen (at the end of composition, just before returning to home screen)
             composable(route = ChadalScreens.ListSummary.name) {
                 ListSummaryScreen(
                     listUiState = uiState,
@@ -160,7 +171,7 @@ fun ChadalApp(
             }
 
 
-
+            // Old lists screen (shows the previous lists thanks to the list database)
             composable(route = ChadalScreens.OldList.name) {
                 OldListScreen(
                     navController = navController,
@@ -168,6 +179,8 @@ fun ChadalApp(
                     shoppingListDao = shoppingListDao
                 )
             }
+
+            // List composition screen (from which the user adds or removes items to a list)
             composable(route = ChadalScreens.ListComposition.name) {
                 ListCompositionScreen(
                     listUiState = uiState,
@@ -185,8 +198,13 @@ fun ChadalApp(
                     }
                 )
             }
+
+            // Scan screen (on which the user can use his camera to scan a barcode)
             composable(route = ChadalScreens.Scan.name) {
                 var manualEntryOpenDialog by remember { mutableStateOf(false) }
+
+                // Dialog that pops up if the user chooses to enter the barcode manually (if the
+                // code is unreadable for instance)
                 FieldDialog(
                     opened = manualEntryOpenDialog,
                     onDismissRequest = { manualEntryOpenDialog = false },
@@ -213,16 +231,20 @@ fun ChadalApp(
                     },
                 )
             }
+
+            // Item addition screen (on which the user enters all data related to a new article;
+            // this is the script that would be skipped if the scanned article is already in the
+            // database, however, we couldn't add this feature in time.)
             composable(route = ChadalScreens.AddItem.name) {
-                val currentShoppingListId = viewModel.getCurrentShoppingListId()
+                val shoppingListId = viewModel.getCurrentShoppingListId()
                 AddItemScreen(
                     listUiState = uiState,
-                    currentShoppingListId = currentShoppingListId,
+                    currentShoppingListId = shoppingListId,
                     articleDao = articleDao,
                     onValidateButtonClicked = { article ->
                         coroutineScope.launch {
                             withContext(Dispatchers.IO) {
-                                val newArticle = article.copy(shoppingListId = currentShoppingListId)
+                                val newArticle = article.copy(shoppingListId = shoppingListId)
                                 articleDao.insertArticle(newArticle)
 
                             }
@@ -235,6 +257,9 @@ fun ChadalApp(
                     }
                 )
             }
+
+            // All items screen, on which all saved items are displayed. This screen is accessible
+            // from the home screen
             composable(route = ChadalScreens.AllArticle.name) {
                 AllArticleScreen(
                     navController = navController,
@@ -243,7 +268,6 @@ fun ChadalApp(
                         viewModel.removeArticle(article)
                         coroutineScope.launch {
                             withContext(Dispatchers.IO) {
-
                                 articleDao.deleteArticle(article)
                             }
                         }
@@ -252,7 +276,8 @@ fun ChadalApp(
 
             }
 
-
+            // Screen similar to the list composition screen, used when the user wants to consult
+            // an old list (from the "Old lists" screen). It shows the articles and their prices
             composable("ArticleCompositionScreen/{shoppingListId}") { backStackEntry ->
                 val shoppingListId = backStackEntry.arguments?.getString("shoppingListId")?.toInt() ?: 0
                 val articles = articleDao.getArticlesByShoppingListId(shoppingListId)
@@ -271,6 +296,10 @@ fun ChadalApp(
     }
 }
 
+/**
+ * A component that represents a dialog that show on the screen
+ * It can contains a title, an icon, a text, a confirm button and a dismiss button
+ */
 @Composable
 fun Dialog(
     opened: Boolean? = null,
@@ -306,6 +335,10 @@ fun Dialog(
     }
 }
 
+/**
+ * A component that represents a dialog that has a text field
+ * It is similar to a regular dialog in terms of features, but it returns a value
+ */
 @Composable
 fun FieldDialog(
     opened: Boolean? = null,

@@ -7,6 +7,10 @@ import androidx.room.Delete
 import androidx.room.OnConflictStrategy
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * An interface that manages queries related to the article database.
+ */
+
 @Dao
 interface ArticleDao {
     @Query("SELECT * FROM article_table WHERE shoppingListId = :shoppingListId")
@@ -18,8 +22,6 @@ interface ArticleDao {
     @Delete
     fun deleteArticle(article: Article)
 
-
     @Query("SELECT * FROM article_table")
     fun getAllArticles(): Flow<List<Article>>
-
 }

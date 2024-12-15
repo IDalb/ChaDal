@@ -2,10 +2,9 @@ package ca.uqac.etu.jcid.chadal.data
 
 import androidx.annotation.StringRes
 import ca.uqac.etu.jcid.chadal.R
-import java.util.Locale.Category
 
 /**
- * A data class to represent a category of articles.
+ * A data class that represents a category of articles.
  * A category has its own tax percentage (i.e. 0.05 = 5% tax)
  */
 data class ArticleCategory(
@@ -38,6 +37,6 @@ fun getImageResourceForCategory(categoryName: String): String {
         "candy" -> "candy.png"
         "drinks_tax" -> "drinks_tax.png"
         "alcohol" -> "alcohol.png"
-        else -> "viande_poisson_oeuf.png" // Une image par défaut si la catégorie ne correspond pas
+        else -> "viande_poisson_oeuf.png" // Default image if the category doesn't match
     }
 }

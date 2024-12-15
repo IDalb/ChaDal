@@ -9,15 +9,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
+/**
+ * The view model of a shopping list
+ * It contains all the methods that are used to manipulate a shopping list (add/remove an article,
+ * reset the list...)
+ */
 class ShoppingListViewModel (
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ShoppingListUiState())
     val uiState: StateFlow<ShoppingListUiState> = _uiState.asStateFlow()
     private val _currentShoppingListId = MutableLiveData<Long>()
-
-
-
 
 
     fun resetShoppingList() {
@@ -30,7 +32,6 @@ class ShoppingListViewModel (
             )
         }
     }
-
 
     fun addArticle(article: Article) {
         _uiState.update { currentState ->
@@ -48,8 +49,8 @@ class ShoppingListViewModel (
 
         }
     }
-    fun setBudget(budget: Double) {
 
+    fun setBudget(budget: Double) {
         _uiState.value = _uiState.value.copy(budget = budget)
     }
 
@@ -60,8 +61,8 @@ class ShoppingListViewModel (
     fun getCurrentShoppingListId(): Long {
         return _currentShoppingListId.value ?: 0L
     }
-    fun updateShoppingListInfo(total: Double, articleCount: Int) {
 
+    fun updateShoppingListInfo(total: Double, articleCount: Int) {
         _uiState.value = _uiState.value.copy(
             total = total,
             articles = _uiState.value.articles,
@@ -69,12 +70,4 @@ class ShoppingListViewModel (
             lastScanValue = _uiState.value.lastScanValue
         )
     }
-
-
-
-
-
-
-    }
-
-
+}
