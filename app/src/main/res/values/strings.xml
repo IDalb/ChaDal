@@ -18,10 +18,18 @@
     <string name="finish">Terminer</string>
     <string name="next">Continuer</string>
     <string name="cancel">Annuler</string>
+    <string name="back">Retour</string>
+    <string name="clear">Effacer</string>
     <string name="total">Total : %1$s %2$s</string>
     <string name="budget">Budget : %1$s %2$s</string>
     <string name="unlimited">Illimité</string>
     <string name="budget_label">Budget</string>
+
+    <string name="list_articles">Articles de la liste</string>
+    <string name="previous_lists">Anciennes listes</string>
+
+    <string name="saved_articles">Articles enregistrés</string>
+    <string name="no_saved_articles">Aucun article enregistré</string>
 
     <plurals name="article_number">
         <item quantity="zero">Aucun article</item>

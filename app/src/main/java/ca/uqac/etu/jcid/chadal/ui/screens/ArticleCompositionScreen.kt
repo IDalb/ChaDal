@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -44,6 +45,11 @@ import ca.uqac.etu.jcid.chadal.data.Article
 import ca.uqac.etu.jcid.chadal.data.ArticleDao
 import coil.compose.rememberAsyncImagePainter
 
+/**
+ * The screen used to show all articles belonging to a previous list. It is very close to
+ * "ListCompositionScreen" but it doesn't include some features such as budget, total or the
+ * addition of items (because it's meant to be an "archive" screen)
+ */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ArticleCompositionScreen(
@@ -52,16 +58,15 @@ fun ArticleCompositionScreen(
     modifier: Modifier = Modifier,
     onBackClicked: () -> Unit
 ) {
-
     val articles by articleDao.getArticlesByShoppingListId(currentShoppingListId).collectAsState(initial = emptyList())
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Articles de la liste") },
+                title = { Text(stringResource(R.string.list_articles)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClicked) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Retour")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 }
             )
@@ -77,13 +82,16 @@ fun ArticleCompositionScreen(
             items(articles) { article ->
                 ArticleCard2(
                     article = article,
-                    modifier = modifier.animateItemPlacement()
+                    modifier = modifier.animateItem()
                 )
             }
         }
     }
 }
 
+// Component that is a copy of "Article Card" (a card for an article with its name, photo, price,
+// category...) but without the context menu that allows to delete it (because the list is not
+// supposed to be edited here)
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ArticleCard2(
@@ -140,8 +148,6 @@ fun ArticleCard2(
                 }
             }
         }
-
-
     }
 }
 

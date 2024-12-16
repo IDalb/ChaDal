@@ -42,8 +42,10 @@ import ca.uqac.etu.jcid.chadal.BarcodeAnalyser
 import ca.uqac.etu.jcid.chadal.R
 import ca.uqac.etu.jcid.chadal.data.BarcodeValue
 import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
-import java.util.concurrent.Executors
 
+/**
+ * The screen on which the user can scan a barcode
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScanScreen(
@@ -53,7 +55,8 @@ fun ScanScreen(
     onCancelButtonClicked: () -> Unit = {},
     onNoBarcodeButtonClicked: () -> Unit = {}
 ) {
-    var code by remember { mutableStateOf("") }
+    // Variables that store data related to the scan (camera permissions, actual barcode data...)
+    val code by remember { mutableStateOf("") }
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
@@ -90,8 +93,9 @@ fun ScanScreen(
             )
         }
     ) { innerPadding ->
-        if (hasCameraPermission) {
-            Column(modifier.fillMaxSize().padding(innerPadding)) {
+        Column(modifier.fillMaxSize().padding(innerPadding)) {
+            // If we have camera permission, show what the camera sees
+            if (hasCameraPermission) {
                 AndroidView(
                     factory = { context ->
                         val previewView = PreviewView(context)
@@ -99,7 +103,7 @@ fun ScanScreen(
                         val selector = CameraSelector.Builder()
                             .requireLensFacing(CameraSelector.LENS_FACING_BACK)
                             .build()
-                        preview.setSurfaceProvider(previewView.surfaceProvider)
+                        preview.surfaceProvider = previewView.surfaceProvider
                         val imageAnalysis = ImageAnalysis.Builder()
                             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                             .build()
@@ -121,28 +125,28 @@ fun ScanScreen(
                     },
                     modifier = Modifier.weight(1f)
                 )
-                Text(
-                    text = code,
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.fillMaxWidth().padding(32.dp)
-                )
-                Column (modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+            }
+
+            // Action buttons
+            Column (modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                // This buttons allows the user to enter the barcode manually
+                FilledTonalButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = onManualEntryButtonClicked
                 ) {
-                    FilledTonalButton(
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = onManualEntryButtonClicked
-                    ) {
-                        Text(stringResource(R.string.enter_code_manually))
-                    }
-                    OutlinedButton(
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = onNoBarcodeButtonClicked
-                    ) {
-                        Text(stringResource(R.string.no_barcode))
-                    }
+                    Text(stringResource(R.string.enter_code_manually))
+                }
+
+                // This button allows the user to skip barcode scan (if there is no code for instance)
+                OutlinedButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = onNoBarcodeButtonClicked
+                ) {
+                    Text(stringResource(R.string.no_barcode))
                 }
             }
         }

@@ -1,8 +1,6 @@
 package ca.uqac.etu.jcid.chadal.ui.screens
 
 import android.annotation.SuppressLint
-import android.app.Application
-import androidx.camera.core.impl.utils.ContextUtil
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -38,6 +36,11 @@ import ca.uqac.etu.jcid.chadal.R
 import ca.uqac.etu.jcid.chadal.data.ShoppingListUiState
 import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
 
+/**
+ * This screen summarizes a list before it is finished and save. The user have the possibility to
+ * add a name to the list so that he can find it easier later.
+ */
+@SuppressLint("DefaultLocale")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListSummaryScreen(
@@ -64,6 +67,7 @@ fun ListSummaryScreen(
                 .padding(innerPadding)
                 .padding(16.dp, 32.dp),
         ) {
+            // Text that displays the number of articles
             Text(
                 text = LocalContext.current.resources.getQuantityString(
                     R.plurals.article_number,
@@ -75,6 +79,7 @@ fun ListSummaryScreen(
 
             HorizontalDivider(modifier = modifier.padding(16.dp, 24.dp))
 
+            // Total of the list
             Text(
                 text = stringResource(
                     R.string.total,
@@ -83,12 +88,15 @@ fun ListSummaryScreen(
                 ),
                 style = MaterialTheme.typography.titleLarge
             )
+            // Budget of the list
             Text(
-                text = if (listUiState.budget != null) stringResource(
+                // If a budget was set
+                text = if (listUiState.budget != null && listUiState.budget != 0.0) stringResource(
                     R.string.budget,
                     String.format("%.2f", listUiState.budget),
                     stringResource(R.string.currency_cad)
                 )
+                // If no budget was set
                 else stringResource(
                     R.string.budget,
                     stringResource(R.string.unlimited),
@@ -97,6 +105,7 @@ fun ListSummaryScreen(
                 style = MaterialTheme.typography.titleSmall
             )
 
+            // Budget progress bar (if a budget was set)
             if (listUiState.budget != null && listUiState.budget != 0.0)
                 LinearProgressIndicator(
                     progress = {
@@ -113,6 +122,7 @@ fun ListSummaryScreen(
                         )
                 )
 
+            // Optional list name text field
             OutlinedTextField(
                 value = listName,
                 onValueChange = { listName = it },
@@ -120,6 +130,7 @@ fun ListSummaryScreen(
                 modifier = modifier.fillMaxWidth()
             )
 
+            // 2 buttons: "Cancel" and "Finish"
             Row(
                 modifier = Modifier.fillMaxWidth().padding(0.dp, 48.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),

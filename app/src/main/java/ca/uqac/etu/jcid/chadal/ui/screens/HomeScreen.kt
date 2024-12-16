@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -29,8 +27,8 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -39,29 +37,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import ca.uqac.etu.jcid.chadal.ChadalScreens
 import ca.uqac.etu.jcid.chadal.R
-import ca.uqac.etu.jcid.chadal.data.DataStoreManager
-import ca.uqac.etu.jcid.chadal.data.ShoppingListDao
-import ca.uqac.etu.jcid.chadal.ui.Component.CardList
+import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
 
-
+/**
+ * The screen on which the user arrives when he launches the app
+ * It allows the user to start a new shopping list or to consult previous lists and articles
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onStartShoppingButtonClicked: (Double) -> Unit,
     navController: NavController,
-    dataStoreManager: DataStoreManager,
-    shoppingListDao: ShoppingListDao,
     modifier: Modifier = Modifier
 ) {
-
-    val showText = remember { mutableStateOf(false) }
     var budgetText by remember { mutableStateOf("") }
     val budget = budgetText.toDoubleOrNull() ?: 0.0
-    val shoppingLists by shoppingListDao.getAllShoppingLists().collectAsState(initial = emptyList())
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -81,6 +78,7 @@ fun HomeScreen(
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Component that allows to create a list
             OutlinedCard(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -113,8 +111,6 @@ fun HomeScreen(
 
                     Button(
                         onClick = {
-
-                                showText.value = true
                             onStartShoppingButtonClicked(budget)
                         },
                         modifier = Modifier.fillMaxWidth()
@@ -130,9 +126,10 @@ fun HomeScreen(
     }
 }
 
+// Bottom navigation bar; it contains 3 tabs : "Home", "Previous lists" and "Saved items"
 @Composable
 fun BottomNavigationBar(navController: NavController) {
-    var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
+    var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
     NavigationBar {
         NavigationBarItem(
             selected = selectedTabIndex == 0,
@@ -149,23 +146,21 @@ fun BottomNavigationBar(navController: NavController) {
                 selectedTabIndex = 1
                 navController.navigate(ChadalScreens.OldList.name)
             },
-            icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = "Previous lists") },
-            label = { Text("Anciennes listes") }
+            icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = stringResource(R.string.previous_lists)) },
+            label = { Text(stringResource(R.string.previous_lists)) }
         )
         NavigationBarItem(
             selected = selectedTabIndex == 2,
             onClick = {
                 selectedTabIndex = 2
                 navController.navigate(ChadalScreens.AllArticle.name) },
-            icon = { Icon(Icons.Filled.ShoppingCart, contentDescription = "Saved products") },
-            label = { Text("Produits") }
+            icon = { Icon(Icons.Filled.ShoppingCart, contentDescription = stringResource(R.string.saved_articles)) },
+            label = { Text(stringResource(R.string.saved_articles)) }
         )
     }
 }
 
 
-
-/*
 @Preview
 @Composable
 fun HomeScreenPreview() {
@@ -176,4 +171,3 @@ fun HomeScreenPreview() {
         )
     }
 }
-*/

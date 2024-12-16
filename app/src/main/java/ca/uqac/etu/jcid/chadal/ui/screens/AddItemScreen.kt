@@ -32,33 +32,33 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import ca.uqac.etu.jcid.chadal.R
 import ca.uqac.etu.jcid.chadal.data.Article
-import ca.uqac.etu.jcid.chadal.data.ArticleDao
 import ca.uqac.etu.jcid.chadal.data.ShoppingListUiState
 import ca.uqac.etu.jcid.chadal.data.categories
+import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
 import coil3.compose.rememberAsyncImagePainter
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.Objects
-import androidx.compose.runtime.rememberCoroutineScope
 
+/**
+ * The screen on which the user enters data in order to register a new article and add it
+ * to the shopping list
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddItemScreen(
     modifier: Modifier = Modifier,
     listUiState: ShoppingListUiState,
     currentShoppingListId: Long,
-    articleDao: ArticleDao,
-    onValidateButtonClicked: (Article) -> Unit,
-    onCancelButtonClicked: () -> Unit
+    onValidateButtonClicked: (Article) -> Unit = {},
+    onCancelButtonClicked: () -> Unit = {}
 
 ) {
     var priceInput by remember { mutableStateOf("") }
@@ -71,8 +71,6 @@ fun AddItemScreen(
 
     val context = LocalContext.current
     var uri by remember { mutableStateOf(Uri.EMPTY) }
-
-    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -93,6 +91,7 @@ fun AddItemScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            // Label that shows the value of the barcode (or "No barcode" if no barcode were scanned)
             Text(
                 text = if (listUiState.lastScanValue.displayValue == "") stringResource(R.string.no_barcode)
                 else stringResource(
@@ -103,9 +102,9 @@ fun AddItemScreen(
                 color = Color.Gray
             )
 
-            Divider()
+            HorizontalDivider()
 
-
+            // Price text field
             OutlinedTextField(
                 label = { Text(stringResource(R.string.price)) },
                 placeholder = { Text("0") },
@@ -124,7 +123,7 @@ fun AddItemScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-
+            // Category dropdown menu
             ExposedDropdownMenuBox(
                 expanded = expanded,
                 onExpandedChange = { expanded = !expanded }
@@ -154,12 +153,16 @@ fun AddItemScreen(
                     }
                 }
             }
+
+
+            // Title : "Optional data"
             Text(
                 text = stringResource(R.string.optional_infos),
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(top = 40.dp)
             )
 
+            // Article name text field
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
@@ -173,12 +176,14 @@ fun AddItemScreen(
             )
 
 
+            // "Add photo" component
             if (!LocalInspectionMode.current) {
                 TakePhotoFromCamera { uri = it }
             }
 
             Spacer(modifier = Modifier.weight(1f))
 
+            // Two buttons at the bottom of the screen (cancel & finish)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
@@ -216,8 +221,7 @@ fun AddItemScreen(
     }
 }
 
-
-
+// Gets the default image (if no custom image was set) based on the selected category
 fun getImageForCategory(categoryName: Int): Int {
     return when (categoryName) {
         R.string.category_meat_fish_eggs -> R.drawable.viande_poisson_oeuf
@@ -234,49 +238,8 @@ fun getImageForCategory(categoryName: Int): Int {
     }
 }
 
-
-@Composable
-fun PhotoCapture(capturedImageUri: Uri, captureFunction: ()->Unit = {}) {
-    val composable: @Composable ()->Unit
-
-    if (capturedImageUri.path?.isNotEmpty() == true) {
-        composable = {
-                Image(
-                painter = rememberAsyncImagePainter(capturedImageUri),
-                contentScale = ContentScale.Crop,
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
-    } else {
-        composable = {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.add_photo),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.size(40.dp)
-                )
-                Text(stringResource(R.string.add_image))
-            }
-        }
-    }
-
-    OutlinedButton(
-        onClick = captureFunction,
-        shape = RoundedCornerShape(8.dp),
-        contentPadding = PaddingValues(0.dp),
-        modifier = Modifier
-            .height(200.dp)
-            .aspectRatio(1f, true)
-    ) { composable.invoke() }
-}
-
-
-
+// Component that allows the user to add a custom photo to the article
+// This component also include some logic for picture taking and saving as well as permissions
 @Composable
 fun TakePhotoFromCamera(setMethod: (Uri)->Unit) {
     val context = LocalContext.current
@@ -316,6 +279,52 @@ fun TakePhotoFromCamera(setMethod: (Uri)->Unit) {
     }
 }
 
+// Component that allows the user to add a custom photo to the article
+// This smaller component only contains the visual aspect of the component
+@Composable
+fun PhotoCapture(capturedImageUri: Uri, captureFunction: ()->Unit = {}) {
+    val composable: @Composable ()->Unit
+
+    // If a photo was already taken, a thumbnail preview is displayed
+    if (capturedImageUri.path?.isNotEmpty() == true) {
+        composable = {
+            Image(
+                painter = rememberAsyncImagePainter(capturedImageUri),
+                contentScale = ContentScale.Crop,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+    // If no photo was taken yet, a "+" button is displayed instead
+    else {
+        composable = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.add_photo),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.size(40.dp)
+                )
+                Text(stringResource(R.string.add_image))
+            }
+        }
+    }
+
+    OutlinedButton(
+        onClick = captureFunction,
+        shape = RoundedCornerShape(8.dp),
+        contentPadding = PaddingValues(0.dp),
+        modifier = Modifier
+            .height(200.dp)
+            .aspectRatio(1f, true)
+    ) { composable.invoke() }
+}
+
+// Create a file base on a taken photo
 fun Context.createImageFile(): File {
     val timeStamp = SimpleDateFormat("yyyy_MM_dd_HH-mm_ss", Locale.US).format(Date())
     val imageFileName = "ARTICLE_IMG_$timeStamp"
@@ -325,13 +334,11 @@ fun Context.createImageFile(): File {
 }
 
 
-/*
 @Preview
 @Composable
 fun AddItemScreenPreview() {
     ChaDalTheme {
         AddItemScreen(listUiState = ShoppingListUiState(),
-            currentShoppingListId = 100, articleDao = articleDao)
+            currentShoppingListId = 100)
     }
 }
-*/

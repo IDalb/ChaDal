@@ -23,9 +23,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import ca.uqac.etu.jcid.chadal.R
 import ca.uqac.etu.jcid.chadal.data.DataStoreManager
 import ca.uqac.etu.jcid.chadal.data.ShoppingListDao
 import ca.uqac.etu.jcid.chadal.ui.Component.CardList
@@ -33,6 +35,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+/**
+ * This screens shows all previous lists that the user saved.
+ * It is one of the tabs available from the home screen
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OldListScreen(
@@ -47,7 +53,7 @@ fun OldListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Anciennes listes") },
+                title = { Text(stringResource(R.string.previous_lists)) },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 ),
@@ -63,9 +69,11 @@ fun OldListScreen(
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // This part (title and buttons) were added for the beta demo, as a way to
+            // delete saved lists
             Spacer(modifier = Modifier.height(20.dp))
             Text(
-                text = "Liste de courses",
+                text = stringResource(R.string.previous_lists),
                 style = MaterialTheme.typography.headlineLarge,
                 modifier = Modifier.padding(bottom = 24.dp)
             )
@@ -81,13 +89,14 @@ fun OldListScreen(
                     .size(100.dp, 50.dp)
             ) {
                 Text(
-                    text = "Clear",
+                    text = stringResource(R.string.clear),
                     modifier = Modifier.align(Alignment.CenterVertically),
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center
                 )
             }
 
+            // All previous lists (in a LazyColumn so that it loads only when the user scrolls)
             LazyColumn(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -107,14 +116,12 @@ fun OldListScreen(
     }
 }
 
-
-
 /*
 @Preview
 @Composable
 fun OldListScreenPreview() {
     ChaDalTheme {
-        OldListScreen( navController = rememberNavController()) // NavController est nul pour l'aperçu
+        OldListScreen( navController = rememberNavController()) // NavController est is null for the preview
     }
 }
 */

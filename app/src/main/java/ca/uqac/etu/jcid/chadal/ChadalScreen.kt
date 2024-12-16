@@ -133,9 +133,7 @@ fun ChadalApp(
                             startShopping()
 
                     },
-                    navController = navController,
-                    dataStoreManager = dataStoreManager,
-                    shoppingListDao = shoppingListDao,
+                    navController = navController
                 )
             }
 
@@ -238,7 +236,6 @@ fun ChadalApp(
                 AddItemScreen(
                     listUiState = uiState,
                     currentShoppingListId = shoppingListId,
-                    articleDao = articleDao,
                     onValidateButtonClicked = { article ->
                         coroutineScope.launch {
                             withContext(Dispatchers.IO) {

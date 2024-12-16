@@ -1,8 +1,6 @@
 package ca.uqac.etu.jcid.chadal.ui.screens
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
@@ -47,18 +45,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import ca.uqac.etu.jcid.chadal.R
 import ca.uqac.etu.jcid.chadal.data.Article
 import ca.uqac.etu.jcid.chadal.data.ShoppingListUiState
+import ca.uqac.etu.jcid.chadal.ui.theme.ChaDalTheme
 import coil.compose.rememberAsyncImagePainter
 
-
+/**
+ * This screen allows the user to compose a shopping list
+ */
 @SuppressLint("DefaultLocale")
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListCompositionScreen(
     modifier: Modifier = Modifier,
@@ -68,6 +73,7 @@ fun ListCompositionScreen(
     onFinishShoppingButtonClicked: () -> Unit = {}
 
 ) {
+    // The total is updated each recomposition
     updateTotal(listUiState)
 
     Scaffold(
@@ -90,6 +96,8 @@ fun ListCompositionScreen(
         bottomBar = {
             BottomAppBar {
                 Column(modifier = Modifier.fillMaxSize()) {
+
+                    // Budget progress bar (if a budget is set)
                     if (listUiState.budget != null && listUiState.budget != 0.0)
                         LinearProgressIndicator(
                             progress = {
@@ -102,11 +110,13 @@ fun ListCompositionScreen(
                                 .padding(4.dp)
                                 .height(8.dp)
                         )
+
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp, 8.dp)
                     ) {
+                        // "Finish list" button
                         OutlinedButton(
                             onClick = onFinishShoppingButtonClicked
                         ) {
@@ -117,10 +127,12 @@ fun ListCompositionScreen(
                             )
                             Text(stringResource(R.string.finish))
                         }
+                        // List data
                         Column(
                             modifier = Modifier.weight(1f),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
+                            // Total
                             Text(
                                 text = stringResource(
                                     R.string.total,
@@ -129,6 +141,7 @@ fun ListCompositionScreen(
                                 ),
                                 style = MaterialTheme.typography.titleLarge
                             )
+                            // Budget
                             Text(
                                 text = if (listUiState.budget != null && listUiState.budget != 0.0)
                                     stringResource(
@@ -148,6 +161,9 @@ fun ListCompositionScreen(
             }
         }
     ) { innerPadding ->
+
+        // List of all articles (in a LazyGrid so that if there are too many articles, the last
+        // ones only load when the user scrolls)
         LazyVerticalGrid(
             modifier = modifier
                 .padding(innerPadding)
@@ -160,13 +176,15 @@ fun ListCompositionScreen(
             items(listUiState.articles) {article ->
                 ArticleCard(
                     article = article,
-                    modifier = modifier.animateItemPlacement(),
+                    modifier = modifier.animateItem(),
                     onRemoveItemButtonClicked = { onRemoveItemButtonClicked(article) }
                 )
             }
         }
     }
 }
+
+// Updates the total based on the list's articles and their tax rates
 fun updateTotal(listUiState: ShoppingListUiState) {
     val total = listUiState.articles.sumOf {
         val price = it.price * (1 + it.taxPercentage)
@@ -175,6 +193,7 @@ fun updateTotal(listUiState: ShoppingListUiState) {
     listUiState.total = total
 }
 
+// Component that represents a card with an article data (name, photo, price, category)
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ArticleCard(
@@ -233,7 +252,7 @@ fun ArticleCard(
             }
         }
 
-        // Context menu
+        // Context menu (for item deletion; if item edition was added, it would be available here)
         DropdownMenu(
             expanded = contextualMenuExpanded,
             onDismissRequest = { contextualMenuExpanded = false }
@@ -252,7 +271,6 @@ fun ArticleCard(
 }
 
 
-/*
 @Preview
 @Composable
 fun ListCompositionScreenPreview() {
@@ -261,12 +279,11 @@ fun ListCompositionScreenPreview() {
             listUiState = ShoppingListUiState(
                 List(5) {
                     Article(
-                        stringResource(R.string.placeholder_article_name),
-                        ArticleCategory(R.string.placeholder_category, 0f),
-                        0.0,
-                        ContextCompat.getDrawable(
-                            LocalContext.current,
-                            R.drawable.ic_launcher_foreground)
+                        shoppingListId = 0,
+                        name = stringResource(R.string.placeholder_article_name),
+                        categoryName = R.string.placeholder_category,
+                        taxPercentage = 0.0f,
+                        price = 0.0
                     )
                 },
                 budget = 10.0
@@ -274,4 +291,3 @@ fun ListCompositionScreenPreview() {
         )
     }
 }
-*/
