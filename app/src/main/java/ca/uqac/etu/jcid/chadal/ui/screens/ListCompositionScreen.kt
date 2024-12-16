@@ -130,15 +130,16 @@ fun ListCompositionScreen(
                                 style = MaterialTheme.typography.titleLarge
                             )
                             Text(
-                                text = if (listUiState.budget != null) stringResource(
-                                    R.string.budget,
-                                    String.format("%.2f", listUiState.budget),
-                                    stringResource(R.string.currency_cad)
-                                ) else stringResource(
-                                    R.string.budget,
-                                    stringResource(R.string.unlimited),
-                                    ""
-                                ),
+                                text = if (listUiState.budget != null && listUiState.budget != 0.0)
+                                    stringResource(
+                                        R.string.budget,
+                                        String.format("%.2f", listUiState.budget),
+                                        stringResource(R.string.currency_cad)
+                                    ) else stringResource(
+                                        R.string.budget,
+                                        stringResource(R.string.unlimited),
+                                        ""
+                                    ),
                                 style = MaterialTheme.typography.titleSmall
                             )
                         }

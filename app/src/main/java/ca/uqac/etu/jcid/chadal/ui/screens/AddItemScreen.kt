@@ -179,7 +179,6 @@ fun AddItemScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
@@ -191,17 +190,11 @@ fun AddItemScreen(
 
                 Button(
                     onClick = {
-                        println("current id" + currentShoppingListId)
-
-
                         val imageUri = if (uri == Uri.EMPTY) {
-
                             Uri.parse("android.resource://${context.packageName}/${getImageForCategory(selectedCategory.name)}").toString()
                         } else {
-
                             uri.toString()
                         }
-
 
                         val article = Article(
                             shoppingListId = currentShoppingListId,
@@ -218,9 +211,6 @@ fun AddItemScreen(
                 ) {
                     Text(stringResource(R.string.finish))
                 }
-
-
-
             }
         }
     }

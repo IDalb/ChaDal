@@ -87,12 +87,10 @@ fun ChadalApp(
                 fun startShopping() {
                     // If no budget is set (null), we deactivate the budget progress bar and
                     // display it as 'unlimited'
-                    val budgetRemember = if (budget == 0.0) null else budget
+                    val budgetRemember = budget ?: 0.0
                     viewModel.resetShoppingList()
 
-                    if (budgetRemember != null) {
-                        viewModel.setBudget(budgetRemember)
-                    }
+                    viewModel.setBudget(budgetRemember)
                     coroutineScope.launch {
                         withContext(Dispatchers.IO) {
                             uiState.budget?.let { budget ->
@@ -246,7 +244,6 @@ fun ChadalApp(
                             withContext(Dispatchers.IO) {
                                 val newArticle = article.copy(shoppingListId = shoppingListId)
                                 articleDao.insertArticle(newArticle)
-
                             }
                             viewModel.addArticle(article)
                         }

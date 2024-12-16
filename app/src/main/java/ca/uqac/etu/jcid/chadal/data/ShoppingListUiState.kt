@@ -3,7 +3,6 @@ package ca.uqac.etu.jcid.chadal.data
 /**
  * A data class that represents a value received when scanning a barcode. It helps containing both
  * the raw (unformatted) and display (formatted) value of the barcode.
- * A category has its own tax percentage (i.e. 0.05 = 5% tax)
  */
 data class BarcodeValue(
     var rawValue: String,
